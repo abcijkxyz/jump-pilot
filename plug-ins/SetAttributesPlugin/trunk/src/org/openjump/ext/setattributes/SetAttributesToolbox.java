@@ -50,6 +50,9 @@ public class SetAttributesToolbox {
     @XmlAttribute (required=false)
     boolean unselect;
 
+    @XmlElement (name="combo")
+    List<ListOfSetOfAttributes> comboboxes;
+
     @XmlElement (name="button")
     List<SetOfAttributes> buttons;
 
@@ -64,34 +67,47 @@ public class SetAttributesToolbox {
         constraints.gridy = 0;
         constraints.insets = new Insets(1,1,1,1);
         final PlugInContext pluginContext = context.createPlugInContext();
-        for (final SetOfAttributes setOfAttributes : buttons) {
-            ImageIcon icon = new ImageIcon(dir.getPath()+"/"+setOfAttributes.icon);
-            final JButton button;
-            if (icon.getImageLoadStatus() == MediaTracker.COMPLETE) {
-                button = new JButton(icon);
-            } else {
-                button = new JButton(setOfAttributes.text);
-                if (setOfAttributes.getBackgroundColor()!=null) {
-                    button.setBackground(setOfAttributes.getBackgroundColor());
-                    //button.setContentAreaFilled(false);
-                    button.setOpaque(true);
-                }
-            }
-            if (setOfAttributes.getAttributes() == null || setOfAttributes.getAttributes().size()==0) {
-                button.setEnabled(false);
-            }
-            button.setMargin(new Insets(0, 0, 0, 0));
-            button.setPreferredSize(new Dimension(iconWidth, iconHeight));
-            button.setToolTipText(setOfAttributes.getTooltip());
-
-            button.addActionListener(new SetAttributesButtonActionListener(pluginContext, setOfAttributes, unselect));
-
-            button.addMouseListener(new SetAttributesButtonMouseListener(setOfAttributes, button));
-            dialog.getContentPane().add(button, constraints);
-            constraints.gridx += 1;
-            if (constraints.gridx >= maxCol) {
+        if (comboboxes != null) {
+            for (final ListOfSetOfAttributes listOfSetOfAttributes : comboboxes) {
+                final JComboBox<SetOfAttributes> combo = listOfSetOfAttributes.createCombo(dir);
                 constraints.gridx = 0;
+                dialog.getContentPane().add(new JLabel(listOfSetOfAttributes.text), constraints);
+                constraints.gridx = 1;
+                combo.addItemListener(new SetAttributesComboItemListener(pluginContext, unselect));
+                dialog.getContentPane().add(combo, constraints);
                 constraints.gridy += 1;
+            }
+        }
+        if (buttons != null) {
+            for (final SetOfAttributes setOfAttributes : buttons) {
+                ImageIcon icon = new ImageIcon(dir.getPath() + "/" + setOfAttributes.icon);
+                final JButton button;
+                if (icon.getImageLoadStatus() == MediaTracker.COMPLETE) {
+                    button = new JButton(icon);
+                } else {
+                    button = new JButton(setOfAttributes.text);
+                    if (setOfAttributes.getBackgroundColor() != null) {
+                        button.setBackground(setOfAttributes.getBackgroundColor());
+                        //button.setContentAreaFilled(false);
+                        button.setOpaque(true);
+                    }
+                }
+                if (setOfAttributes.getAttributes() == null || setOfAttributes.getAttributes().size() == 0) {
+                    button.setEnabled(false);
+                }
+                button.setMargin(new Insets(0, 0, 0, 0));
+                button.setPreferredSize(new Dimension(iconWidth, iconHeight));
+                button.setToolTipText(setOfAttributes.getTooltip());
+
+                button.addActionListener(new SetAttributesButtonActionListener(pluginContext, setOfAttributes, unselect));
+
+                button.addMouseListener(new SetAttributesButtonMouseListener(setOfAttributes, button));
+                dialog.getContentPane().add(button, constraints);
+                constraints.gridx += 1;
+                if (constraints.gridx >= maxCol) {
+                    constraints.gridx = 0;
+                    constraints.gridy += 1;
+                }
             }
         }
         return dialog;
