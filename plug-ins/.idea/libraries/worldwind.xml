@@ -1,0 +1,15 @@
+<component name="libraryTable">
+  <library name="worldwind">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../../worldwind/worldwind-v2.1.0/gluegen-rt.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../worldwind/worldwind-v2.1.0/jogl-all.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../worldwind/worldwind-v2.1.0/worldwindx.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../worldwind/worldwind-v2.1.0/worldwind.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/../../worldwind/worldwind-v2.1.0/worldwind.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../worldwind/worldwind-v2.1.0/worldwindx.jar!/" />
+    </SOURCES>
+  </library>
+</component>
