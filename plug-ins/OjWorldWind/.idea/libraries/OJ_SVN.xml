@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="OJ SVN">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/../../openjump-svn/core/trunk/lib" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="file://$PROJECT_DIR$/../../openjump-svn/core/trunk/lib" />
+    </SOURCES>
+    <jarDirectory url="file://$PROJECT_DIR$/../../openjump-svn/core/trunk/lib" recursive="false" />
+    <jarDirectory url="file://$PROJECT_DIR$/../../openjump-svn/core/trunk/lib" recursive="false" type="SOURCES" />
+  </library>
+</component>
