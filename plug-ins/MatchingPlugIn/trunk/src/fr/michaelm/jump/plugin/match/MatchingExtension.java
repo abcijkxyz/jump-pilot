@@ -28,9 +28,11 @@ import com.vividsolutions.jump.workbench.plugin.PlugInContext;
 /**
  * Extension containing matching processing also known as join.
  * @author Michaël Michaud
- * @version 0.8.1 (2018-07-11)
+ * @version 0.8.2 (2019-12-30)
  */ 
 // History
+// 0.8.2 (2019-12-30) : fixes 2 UI bugs (setting of geometry matcher parameters
+//                      and disabling of agregation rules for new attribute types)
 // 0.8.1 (2018-07-11) : restore I18N for GeometryMatcher names
 // 0.8.0 (2018-06-17) : refactor to use add/getParameter, the OJ aggregation
 //                      classes and long and boolean attribute types
@@ -71,7 +73,7 @@ public class MatchingExtension extends Extension {
     }
 
     public String getVersion() {
-        return "0.8.1 (2018-07-11)";
+        return "0.8.2 (2019-12-30)";
     }
 
     public void configure(PlugInContext context) throws Exception {
