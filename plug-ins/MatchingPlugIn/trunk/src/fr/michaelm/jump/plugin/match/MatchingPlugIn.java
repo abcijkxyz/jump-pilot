@@ -432,10 +432,10 @@ public class MatchingPlugIn extends ThreadedBasePlugIn {
                 dialog.addComboBox(GEOMETRY_MATCHER, geometry_matcher, geomMatcherList, null);
 
         final JTextField jtf_dist = dialog.addDoubleField(MAXIMUM_DISTANCE, max_distance, 12, null);
-        jtf_dist.setEnabled(set_max_distance);
+        jtf_dist.setEnabled(!Double.isNaN(geometry_matcher.getMaximumDistance()));
         
         final JTextField jtf_overlap = dialog.addDoubleField(MINIMUM_OVERLAPPING, min_overlapping, 12, null);
-        jtf_overlap.setEnabled(set_min_overlapping);
+        jtf_overlap.setEnabled(!Double.isNaN(geometry_matcher.getMinimumOverlapping()));
 
         ////////////////////////////////////////////////////////////////////////
         // UI : CHOOSE TARGET LAYER AND SOURCE CARDINALITY
@@ -453,9 +453,20 @@ public class MatchingPlugIn extends ThreadedBasePlugIn {
         jcb_geom_operation.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 updateDialog(dialog);
+                // Set jtf_dist and jtf_overlap to the last used values for this matcher
                 geometry_matcher = (GeometryMatcher)jcb_geom_operation.getSelectedItem();
                 jtf_dist.setText(""+geometry_matcher.getMaximumDistance());
                 jtf_overlap.setText(""+geometry_matcher.getMinimumOverlapping());
+            }
+        });
+        jtf_dist.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                geometry_matcher.setMaximumDistance(dialog.getDouble(MAXIMUM_DISTANCE));
+            }
+        });
+        jtf_overlap.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                geometry_matcher.setMinimumOverlapping(dialog.getDouble(MINIMUM_OVERLAPPING));
             }
         });
 
@@ -575,8 +586,8 @@ public class MatchingPlugIn extends ThreadedBasePlugIn {
 
         // Updates related to a geometry_matcher change
         geometry_matcher = (GeometryMatcher)dialog.getValue(GEOMETRY_MATCHER);
-        geometry_matcher.setMaximumDistance(dialog.getDouble(MAXIMUM_DISTANCE));
-        geometry_matcher.setMinimumOverlapping(dialog.getDouble(MINIMUM_OVERLAPPING));
+        //geometry_matcher.setMaximumDistance(dialog.getDouble(MAXIMUM_DISTANCE));
+        //geometry_matcher.setMinimumOverlapping(dialog.getDouble(MINIMUM_OVERLAPPING));
         dialog.setFieldEnabled(MAXIMUM_DISTANCE, !Double.isNaN(geometry_matcher.getMaximumDistance()));
         dialog.setFieldEnabled(MINIMUM_OVERLAPPING, !Double.isNaN(geometry_matcher.getMinimumOverlapping()));
         //String sMatcher = dialog.getText(GEOMETRY_MATCHER);
@@ -620,8 +631,10 @@ public class MatchingPlugIn extends ThreadedBasePlugIn {
         boolean _transfer_best_match_only = dialog.getBoolean(TRANSFER_BEST_MATCH_ONLY);
         dialog.setFieldEnabled(STRING_AGGREGATION, _transfer && !_transfer_best_match_only);
         dialog.setFieldEnabled(INTEGER_AGGREGATION, _transfer && !_transfer_best_match_only);
+        dialog.setFieldEnabled(LONG_AGGREGATION, _transfer && !_transfer_best_match_only);
         dialog.setFieldEnabled(DOUBLE_AGGREGATION, _transfer && !_transfer_best_match_only);
         dialog.setFieldEnabled(DATE_AGGREGATION, _transfer && !_transfer_best_match_only);
+        dialog.setFieldEnabled(BOOLEAN_AGGREGATION, _transfer && !_transfer_best_match_only);
         
         // Updates related to attribute matching
         boolean _use_attributes = dialog.getBoolean(USE_ATTRIBUTES);

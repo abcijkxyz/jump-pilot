@@ -16,7 +16,7 @@
     <property name="resources"     value="resources" />
     <property name="javadoc"       value="javadoc" />
 
-    <property name="matching-version"        value="0.8.1" />
+    <property name="matching-version"        value="0.8.2" />
     
     <!-- =================================================================== -->
     <!-- Defines the classpath used for compilation and test.                -->
@@ -37,7 +37,7 @@
         <mkdir dir="build"/>
         <javac srcdir="${src}" destdir="build"
                debug="on" deprecation="false" nowarn="true"
-               source="1.7" target="1.7">
+               source="1.8" target="1.8">
             <!--compilerarg value="-Xlint:unchecked"/-->
              <classpath refid="classpath"/>
         </javac>

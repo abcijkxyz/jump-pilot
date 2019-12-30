@@ -73,6 +73,7 @@ public class ShapeMatcher extends GeometryMatcher {
      * @see #getMaximumDistance
      */
     public void setMaximumDistance(double max_dist) {
+        if (Double.isNaN(max_dist)) return; // Never set maxDistance to NaN
         this.max_dist = max_dist;
     }
     
@@ -82,6 +83,7 @@ public class ShapeMatcher extends GeometryMatcher {
      * @see #getMinimumOverlapping
      */
     public void setMinimumOverlapping(double min_overlap) {
+        if (Double.isNaN(min_overlap)) return; // Never set minOverlap to NaN
         this.min_overlap = min_overlap;
     }
     

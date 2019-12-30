@@ -59,6 +59,7 @@ public class OverlapsMatcher extends GeometryMatcher {
      * @see #getMinimumOverlapping
      */
     public void setMinimumOverlapping(double min_overlap) {
+        if (Double.isNaN(min_overlap)) return; // Never set minOverlap to NaN
         this.min_overlap = min_overlap;
     }
     

@@ -63,6 +63,7 @@ public class SemiHausdorffDistanceMatcher extends HausdorffDistanceMatcher {
      * @see #getMaximumDistance
      */
     public void setMaximumDistance(double max_dist) {
+        if (Double.isNaN(max_dist)) return; // Never set maxDistance to NaN
         this.max_dist = max_dist;
     }
     
