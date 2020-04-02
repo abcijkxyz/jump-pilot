@@ -34,14 +34,15 @@ import fr.michaelm.jump.plugin.smooth.BezierSmootherPlugIn;
 public class MapGenExtension extends Extension{
 
     public final static String SMOOTH = "fr.michaelm.jump.plugin.smooth";
-    public final static String SMOOTHING = I18N.getText(SMOOTH, "smoothing");
+    //public final static String SMOOTHING = I18N.getText(SMOOTH, "smoothing");
+    public final static String SMOOTHING = I18N.getInstance(SMOOTH).get("smoothing");
     
     public String getName() {
-        return "Map Generalization Toolbox (Stefan Steiniger, Micha&euml;l Michaud, Michael Bedward, Larry Becker)";
+        return "Map Generalization Toolbox (Stefan Steiniger, Michaël Michaud, Michael Bedward, Larry Becker)";
     }
 
     public String getVersion() {
-        return "1.1 (2013-09-11)";
+        return "1.2 (2020-04-02)";
     }
     
 	/**

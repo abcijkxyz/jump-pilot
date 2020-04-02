@@ -65,7 +65,7 @@ public class BuildingEnlargeToRectangle {
      * creates MBR with same area as input polygon 
      * initialises and calls calculate()
      * @param poly building geometry
-     * @param finalArea as minimum area size in m^2
+     * //@param finalArea as minimum area size in m^2
      */    
     public BuildingEnlargeToRectangle(Polygon poly){
         this.inPolygon = poly;

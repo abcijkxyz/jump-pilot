@@ -287,7 +287,7 @@ public class OrientationMBR /*extends JFrame*/{
      * calculates orientation using statistical 
      * analysis (histogramm of angles)
      * uses only the outer Ring Elements
-     * for description see Duchêne et al. 2003(ICA Workshop, Paris) 
+     * for description see DuchÃªne et al. 2003(ICA Workshop, Paris)
      */
     private void calcStatisticMBR(){
 

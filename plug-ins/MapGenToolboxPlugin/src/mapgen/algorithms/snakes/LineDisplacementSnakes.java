@@ -213,7 +213,7 @@ public class LineDisplacementSnakes {
      * @param iterations
      * @param signatureDiameterMM
      * @param scale
-     * @param context Jump Workbenchcontext to send status messages 
+     * @param monitor Jump Workbenchcontext to send status messages
      */
     public LineDisplacementSnakes(Collection features, int iterations, double signatureDiameterMM, 
     			int scale, TaskMonitor monitor){
@@ -681,9 +681,9 @@ public class LineDisplacementSnakes {
 	 * evaluates internal, external, integral Energy, networkstate of 
 	 * tempGeometry of LineToDisplace and stores them in the LineToDisplace fields 
 	 * @param line the object to check
-	 * @param geomQTree all the other objects
+	 * @param featureQTree all the other objects
 	 * @param minDist
-	 * @param signatureRadius
+	 * @param signature1Radius
 	 */
 	private void evaluateLineWithDataset(LineToDisplace line, Quadtree featureQTree, 
 										double minDist, double signature1Radius, 
@@ -897,8 +897,9 @@ public class LineDisplacementSnakes {
 
 	/**
 	 * copy the input feature to a new Schema whereby the new 
-	 * Feature Schema musst be an extended or shortened one 
-	 * @param oldSchema
+	 * Feature Schema musst be an extended or shortened one
+	 * @param feature
+	 * @param newSchema
 	 * @return Feature
 	 */
 	private Feature copyFeature(Feature feature, FeatureSchema newSchema){
@@ -948,7 +949,7 @@ public class LineDisplacementSnakes {
 	 * 		-1: Feature is not a LineString<p>
 	 * Attention: matrix will not be symmetric! 
 	 * @param originalFeatureQTree : the Feature Attribute "displaceID" musst be from 0 to n 
-	 * @param tresholdDistance
+	 * @param thresholdDistance
 	 * @return matrix with integer values of network state
 	 */
 	private Matrix evaluateLineNetworkState(Quadtree originalFeatureQTree, double thresholdDistance){
@@ -998,7 +999,7 @@ public class LineDisplacementSnakes {
 										}
 									else{
 										//-- this should usually not happen 
-										//   but could be if a circular exists (kreisförmige strasse, schlaufe)?  
+										//   but could be if a circular exists ?
 										networkState.set(id1.intValue(),id2.intValue(),99);
 									}
 								}

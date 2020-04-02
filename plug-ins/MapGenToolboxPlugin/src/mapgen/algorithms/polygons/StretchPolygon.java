@@ -28,7 +28,7 @@ public class StretchPolygon {
 	/**
 	 *  Stretch the Polygon along a direction with a given scale from a point.
 	 *
-	 *@param  geom the ¨Polygon to stretch.
+	 *@param  geom the Polygon to stretch.
 	 *@param  x0 the X coordinate of the point from where to stretch.
 	 *@param  y0 the Y coordinate of the point from where to stretch.
 	 *@param  angle the angle of the direction to stretch. (angle from the growing X axis)

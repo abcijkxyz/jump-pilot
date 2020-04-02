@@ -61,7 +61,7 @@ public class BuildingSquaring {
     /**
      * initialises and calls calculate()
      * @param poly building geometry
-     * @param maxPointDisplacment maximum distance a point 
+     * @param maxPointDisplacement maximum distance a point
      * 		  is allowed to move in m
      * @param angleThreshold in degree. Maximum value where an edge 
      * 	      direction different from primary or secondary
@@ -118,7 +118,7 @@ public class BuildingSquaring {
      * function which does the squaring and the necessary
      * calculations for one Polygon Ring
      * @param ls = polygon ring to square
-     * @param  RingIndex = nr of ring (exteriorRing = 0, innerRings = idx+1)
+     * @param  ringIndex = nr of ring (exteriorRing = 0, innerRings = idx+1)
      * 					   for homogenisation in modifyFollwingEdges();
      */
     private void calculateForOneRing(LineString ls, int ringIndex){
@@ -253,7 +253,7 @@ public class BuildingSquaring {
      * point and calculate the new corner coordinates of 
      * the intersecting lines 
      * @param edgeIndexList
-     * @param toDirection
+     * @param newDirection
      */
     private void square(ArrayList edgeIndexList, double newDirection, LineString ls){
         //-- square all edges in list

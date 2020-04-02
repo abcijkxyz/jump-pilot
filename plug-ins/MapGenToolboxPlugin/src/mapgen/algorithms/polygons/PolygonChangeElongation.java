@@ -41,7 +41,7 @@ public class PolygonChangeElongation {
      * calls calculate() automatically; center is polygon centroid;
      * angle is given by "wall statistical weigth".
      * @param geom
-     * @param scalefactor : amount of elongation
+     * @param scaleFactor : amount of elongation
      */
     public PolygonChangeElongation(Polygon geom, double scaleFactor){
         this.inPolygon = geom;

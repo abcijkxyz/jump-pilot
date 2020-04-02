@@ -55,7 +55,7 @@ public class BuildingOutlineSimplify {
      * calls calculate() automatically
      * @param geom
      * @param conflictList
-     * @param xxx
+     * @param flexibilityInDegree
      */
     public BuildingOutlineSimplify(Polygon geom, ShortEdgeConflictList conflictList, double flexibilityInDegree, double maxLength){
         this.inPolygon = (Polygon)geom.clone();
@@ -225,7 +225,7 @@ public class BuildingOutlineSimplify {
 	         * 		confType = 4 : semi acute angle (spitzer winkel?)  
 	         * 		confType = 5 : stair shape but with flat angle middle part
 	         * 		confType = 6 : a straight element (start or end point have curvature ~0)
-	         * 		confType = 7 : other type : angle to far away from 0°, 90°, 180°
+	         * 		confType = 7 : other type : angle to far away from 0ï¿½, 90ï¿½, 180ï¿½
 	         * 					   this might be necessary for round buildings	  
 	         ***************************/	        
 			//----------------------
@@ -238,11 +238,11 @@ public class BuildingOutlineSimplify {
         		confType = 2; //u-turn
         	}
         	else if(Math.abs(edgeChange-Math.PI/2) < this.flexInRad){
-        		confType = 3; //perpendicular = 90°
+        		confType = 3; //perpendicular = 90ï¿½
         	}
         	else if((Math.abs(edgeChange) < (3.0/4.0*Math.PI-this.flexInRad))
         			&& (Math.abs(edgeChange) > Math.PI/2)){
-        		confType = 4; //semi acute angle 90°-180%
+        		confType = 4; //semi acute angle 90ï¿½-180%
         	}        	
         	else{
         		confType = 7;
@@ -788,7 +788,7 @@ public class BuildingOutlineSimplify {
     			TangentAngleFunction taf2 = new TangentAngleFunction(ls1.getCoordinates());		        
     			double[] curvValues = taf2.getCurv();
     			for(int i=0; i < (curvValues.length-1); i++){
-    			    if( Math.abs(curvValues[i]) > (3.0/4*Math.PI) ){ //(3.0/4*Math.PI) ~ 90+45° 
+    			    if( Math.abs(curvValues[i]) > (3.0/4*Math.PI) ){ //(3.0/4*Math.PI) ~ 90+45ï¿½ 
     			        newP = ModifyPolygonPoints.deletePoint(newP,sec.edgeRingIdx, i);
     			        System.out.println("BuildingOutlineSimplify.deleteEdge: sharp edge deleted 1");
     			    }
