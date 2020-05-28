@@ -1,0 +1,12 @@
+Special thanks to the original developers of Jump and OpenJump for providing a pluggable GIS editor.
+
+The original version of the OpenJump Map Coloring plugin was created by 
+Larry Reeder, who still maintains the package.
+
+Thanks also to the following people for providing translations:
+
+Edgar Soldin and Stefan Steiniger - German
+Giuseppe Aruta - Italian and Spanish
+Jukka Rahkonen - Finnish
+Michaël Michaud - French
+

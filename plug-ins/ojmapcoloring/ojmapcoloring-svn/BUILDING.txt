@@ -1,0 +1,25 @@
+Instructions for building the OpenJump database query plugin
+------------------------------------------------------------
+
+JDK 6.0 required
+----------------
+You need at least JDK 6.0 to build the plugin.
+
+Get Gradle
+----------
+A gradle build file is provided for you to build the plugin source. 
+If you don't have gradle installed, download it from http://www.gradle.org/ 
+
+
+Useful Build Targets
+--------------------
+clean - cleans temporary build files
+compileJava - compiles the source code
+jar - creates the plugin jar in build/libs
+integrationTest - runs database integration tests.
+packageBinZip - creates the binary package in build/distributions/
+packageSrcZip - creates the source package in build/distributions/
+
+Problems?   Send email to lnreeder AT gmail DOT com
+
+Happy Coding.........       Larry Reeder
