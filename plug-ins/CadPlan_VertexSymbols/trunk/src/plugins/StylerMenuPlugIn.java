@@ -4,6 +4,7 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.ImageIcon;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JToggleButton;
@@ -11,7 +12,6 @@ import javax.swing.JToggleButton;
 import org.openide.awt.DropDownButtonFactory;
 
 import com.cadplan.jump.icon.IconLoader;
-import com.cadplan.jump.language.I18NPlug;
 import com.cadplan.jump.utils.LoadSymbolFiles;
 import com.cadplan.jump.utils.VertexParams;
 import com.vividsolutions.jump.workbench.WorkbenchContext;
@@ -21,7 +21,8 @@ import com.vividsolutions.jump.workbench.plugin.EnableCheckFactory;
 import com.vividsolutions.jump.workbench.plugin.MultiEnableCheck;
 import com.vividsolutions.jump.workbench.plugin.PlugInContext;
 import com.vividsolutions.jump.workbench.ui.GUIUtil;
-import com.vividsolutions.jump.workbench.ui.renderer.style.BasicStyle;
+import com.vividsolutions.jump.workbench.ui.LayerViewPanel;
+import com.vividsolutions.jump.workbench.ui.MenuNames;
 import com.vividsolutions.jump.workbench.ui.task.TaskMonitorManager;
 
 
@@ -30,14 +31,15 @@ public class StylerMenuPlugIn extends AbstractPlugIn {
 
 
 	private PlugInContext context;
-
-	// the JToggleButton in the WorkbenchToolBar
 	private JToggleButton toolbarButton = null;
-
 	public static JMenuItem mi;
-	public static final String COLOR = "COLOR";
-	public static final String R_G_B = BasicStyle.RGB_ATTRIBUTE_NAME;
+
 	private TaskMonitorManager taskMonitorManager;
+	final VertexSymbolsPlugIn vertexSymbolsPlugIn = new VertexSymbolsPlugIn();
+	final VertexNotePlugin vertexnotePlugIn = new VertexNotePlugin();
+	ImageIcon ICON1 = IconLoader.icon("vsicon.gif");
+	ImageIcon ICON2 = IconLoader.icon("noteicon.gif");
+
 	@Override
 	public void initialize(final PlugInContext context) throws Exception {
 		this.context = context;
@@ -46,14 +48,6 @@ public class StylerMenuPlugIn extends AbstractPlugIn {
 				GUIUtil.toSmallIcon(IconLoader.icon("Palette.png"), 20), 
 				initPopupLazily());
 
-		// init popup takes a long time, defer it after workbench is shown
-		/*	SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				colorPickerPopup = initPopupLazily();
-			}
-		});*/
-
 		LoadSymbolFiles loadSymbols = new LoadSymbolFiles(context);
 		loadSymbols.start();
 		VertexParams.context = context.getWorkbenchContext();
@@ -61,16 +55,37 @@ public class StylerMenuPlugIn extends AbstractPlugIn {
 
 		context.getWorkbenchContext().getWorkbench().getFrame().getToolBar().add(toolbarButton);
 
+
+		EnableCheckFactory enableCheckFactory = new EnableCheckFactory(context.getWorkbenchContext());
+		MultiEnableCheck multiEnableCheck = new MultiEnableCheck();
+		multiEnableCheck.add(enableCheckFactory.createAtLeastNLayersMustExistCheck(1));
+		multiEnableCheck.add(enableCheckFactory.createAtLeastNLayersMustBeSelectedCheck(1));
+		String str = MenuNames.PLUGINS;
+		context.getFeatureInstaller().addMainMenuPlugin(vertexSymbolsPlugIn, new String[]{str, MenuNames.STYLE}, 
+				vertexSymbolsPlugIn.getName(), 
+				false, ICON1, multiEnableCheck);
+
+		EnableCheckFactory check = new EnableCheckFactory(context.getWorkbenchContext());
+		EnableCheck scheck = check.createAtLeastNFeaturesMustBeSelectedCheck(1);
+		MultiEnableCheck mcheck = new MultiEnableCheck();
+		mcheck.add(check.createAtLeastNLayersMustExistCheck(1));
+		mcheck.add(check.createAtLeastNLayersMustBeEditableCheck(1));
+
+		context.getFeatureInstaller().addMainMenuPlugin(vertexnotePlugIn, new String[]{str, MenuNames.STYLE}, 
+				vertexnotePlugIn.getName(), false, IconLoader.icon("noteicon.gif"), mcheck);
+		context.getFeatureInstaller().addPopupMenuPlugin(LayerViewPanel.popupMenu(), vertexnotePlugIn, 
+				vertexnotePlugIn.getName(), false,ICON2, scheck);
+
+
 	}
 	final JPopupMenu popup = new JPopupMenu();
 	private JPopupMenu initPopupLazily() {
 
 		popup.setLayout(new GridLayout(0, 1));
 
-		mi = new JMenuItem(I18NPlug.getI18N("VertexSymbols.MenuItem"), 
-				GUIUtil.toSmallIcon(IconLoader.icon("vsicon.gif"), 20));
-		final VertexSymbolsPlugIn vertexSymbolsPlugIn = new VertexSymbolsPlugIn();
-		mi.setToolTipText(I18NPlug.getI18N("VertexSymbols.MenuItem"));
+		mi = new JMenuItem(vertexSymbolsPlugIn.getName(), 
+				GUIUtil.toSmallIcon(ICON1, 20));
+		mi.setToolTipText(vertexSymbolsPlugIn.getName());
 		final ActionListener listener = AbstractPlugIn.toActionListener(vertexSymbolsPlugIn,
 				context.getWorkbenchContext(), taskMonitorManager);
 		mi.addActionListener(new ActionListener() {
@@ -82,10 +97,9 @@ public class StylerMenuPlugIn extends AbstractPlugIn {
 		popup.add(mi);
 
 
-		mi = new JMenuItem(I18NPlug.getI18N("VertexNote.MenuItem"), 
-				GUIUtil.toSmallIcon(IconLoader.icon("noteicon.gif"), 20));
-		final VertexNotePlugin vertexnotePlugIn = new VertexNotePlugin();
-		mi.setToolTipText(I18NPlug.getI18N("VertexNote.MenuItem"));
+		mi = new JMenuItem(vertexnotePlugIn.getName(), 
+				GUIUtil.toSmallIcon(ICON2, 20));
+		mi.setToolTipText(vertexnotePlugIn.getName());
 		final ActionListener listener2 = AbstractPlugIn.toActionListener(vertexnotePlugIn,
 				context.getWorkbenchContext(), taskMonitorManager);
 		mi.addActionListener(new ActionListener() {
