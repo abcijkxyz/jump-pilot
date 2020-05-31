@@ -9,14 +9,11 @@ import java.awt.GraphicsEnvironment;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.Rectangle;
-import java.awt.Shape;
 import java.awt.Toolkit;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.geom.NoninvertibleTransformException;
-import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -25,14 +22,12 @@ import java.util.Set;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JRadioButton;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import org.apache.log4j.Logger;
-import org.openjump.core.ui.util.GeometryUtils;
 
 import com.cadplan.jump.language.I18NPlug;
 import com.cadplan.jump.plugins.VertexSymbolsDialog;
@@ -40,26 +35,17 @@ import com.cadplan.jump.plugins.panel.TextLabelPanel;
 import com.cadplan.jump.plugins.panel.VertexColorThemingPanel;
 import com.cadplan.jump.plugins.panel.VertexParametersPanel;
 import com.cadplan.jump.plugins.panel.VertexSymbologyPanel;
-import com.cadplan.jump.ui.TextAreaEditor;
-import com.vividsolutions.jts.awt.ShapeWriter;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.CoordinateList;
-import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.linearref.LengthIndexedLine;
 import com.vividsolutions.jump.I18N;
-import com.vividsolutions.jump.feature.AttributeType;
 import com.vividsolutions.jump.feature.Feature;
 import com.vividsolutions.jump.feature.FeatureCollection;
-import com.vividsolutions.jump.feature.FeatureSchema;
-import com.vividsolutions.jump.geom.EnvelopeUtil;
 import com.vividsolutions.jump.workbench.JUMPWorkbench;
 import com.vividsolutions.jump.workbench.model.Layer;
 import com.vividsolutions.jump.workbench.ui.TextEditor;
-import com.vividsolutions.jump.workbench.ui.Viewport;
 import com.vividsolutions.jump.workbench.ui.WorkbenchFrame;
-import com.vividsolutions.jump.workbench.ui.renderer.java2D.Java2DConverter;
 import com.vividsolutions.jump.workbench.ui.renderer.style.AlphaSetting;
 import com.vividsolutions.jump.workbench.ui.renderer.style.ColorThemingStyle;
 import com.vividsolutions.jump.workbench.ui.renderer.style.Style;
@@ -67,19 +53,26 @@ import com.vividsolutions.jump.workbench.ui.renderer.style.Style;
 public class StyleUtils {
 	public static WorkbenchFrame frameInstance = JUMPWorkbench.getInstance().getFrame();
 
+	/**
+	 * Gets list of values of an attribute
+	 * @param layer
+	 * @param attribute
+	 * @param maxSize
+	 * @return
+	 */
 	public static List<String> availableValuesList(Layer layer, String attribute, int maxSize) {
-		List<String> list = new ArrayList();
+		List<String> list = new ArrayList<String>();
 		FeatureCollection fc = layer.getFeatureCollectionWrapper();
-		Iterator it = fc.iterator();
+		Iterator<Feature> it = fc.iterator();
 
 		while(it.hasNext() && list.size() < maxSize) {
-			Feature f = (Feature)it.next();
+			Feature f = it.next();
 			list.add(f.getString(attribute));
 		}
 
-		Set<String> set1 = new HashSet();
-		List<String> newList = new ArrayList();
-		Iterator iter = list.iterator();
+		Set<String> set1 = new HashSet<String>();
+		List<String> newList = new ArrayList<String>();
+		Iterator<String> iter = list.iterator();
 
 		while(iter.hasNext()) {
 			Object element = iter.next();
@@ -93,28 +86,9 @@ public class StyleUtils {
 		return list;
 	}
 
-	public static List<String> getAttributeList(Layer layer) {
-		List<String> attrNames = new ArrayList();
-		if (layer != null) {
-			FeatureCollection fc = layer.getFeatureCollectionWrapper();
-			FeatureSchema schema = fc.getFeatureSchema();
 
-			for(int i = 0; i < schema.getAttributeCount(); ++i) {
-				if (schema.getAttributeType(i) != AttributeType.GEOMETRY) {
-					attrNames.add(schema.getAttributeName(i));
-				}
 
-				if (schema.getAttributeName(i).equals("R_G_B") || schema.getAttributeName(i).equals("ShowLabel") || schema.getAttributeName(i).equals("SymbolName")) {
-					attrNames.remove(schema.getAttributeName(i));
-				}
-			}
-		} else {
-			attrNames = new ArrayList();
-		}
-
-		return attrNames;
-	}
-
+	@SuppressWarnings("unchecked")
 	public static CoordinateList Coordinates(Geometry geometry, double distance, double offset) {
 		CoordinateList coordinates = new CoordinateList();
 		LengthIndexedLine lengthIndexedLine = new LengthIndexedLine(geometry);
@@ -129,73 +103,14 @@ public class StyleUtils {
 	}
 
 
-	// [Giuseppe Aruta 2018_3_29] this code derives from
-	// es.unex.sextante.vectorTools.linesToEquispacedPoints class form Sextante
-	// Algorithms. It is used to calculate a List of coordinates along a defined
-	// geometry at an equispaced distance (in this case: 10 px)
-	@SuppressWarnings("unchecked")
-	public static CoordinateList Coordinates(final Geometry geom,  double distance) {
-		final CoordinateList coordinates = new CoordinateList();
-		int i, j;
-		int iPoints;
-		double dX1, dX2, dY1, dY2;
-		double dAddedPointX, dAddedPointY;
-		double dDX, dDY;
-		double dRemainingDistFromLastSegment = 0;
-		double dDistToNextPoint;
-		double dDist;
-		final Coordinate[] coords = geom.getCoordinates();
-		if (coords.length == 0) {
-			return coordinates;
-		}
-
-		dAddedPointX = dX1 = coords[0].x;
-		dAddedPointY = dY1 = coords[0].y;
-		final Coordinate coord1 = new Coordinate(dAddedPointX, dAddedPointY);
-		coordinates.add(coord1);
-		// m_Output.addFeature(point, record);
-		for (i = 0; i < coords.length - 1; i++) {
-			dX2 = coords[i + 1].x;
-			dX1 = coords[i].x;
-			dY2 = coords[i + 1].y;
-			dY1 = coords[i].y;
-			dDX = dX2 - dX1;
-			dDY = dY2 - dY1;
-			dDistToNextPoint = Math.sqrt(dDX * dDX + dDY * dDY);
-
-			if (dRemainingDistFromLastSegment + dDistToNextPoint > distance) {
-				iPoints = (int) ((dRemainingDistFromLastSegment + dDistToNextPoint) / distance);
-				dDist = distance - dRemainingDistFromLastSegment;
-				for (j = 0; j < iPoints; j++) {
-					dDist = distance - dRemainingDistFromLastSegment;
-					dDist += j * distance;
-					dAddedPointX = dX1 + dDist * dDX / dDistToNextPoint;
-					dAddedPointY = dY1 + dDist * dDY / dDistToNextPoint;
-					final Coordinate coord2 = new Coordinate(dAddedPointX,
-							dAddedPointY);
-					coordinates.add(coord2);
-				}
-				dDX = dX2 - dAddedPointX;
-				dDY = dY2 - dAddedPointY;
-				dRemainingDistFromLastSegment = Math
-						.sqrt(dDX * dDX + dDY * dDY);
-			} else {
-				coordinates.add(coords[i + 1]);
-				dRemainingDistFromLastSegment += dDistToNextPoint;
-			}
-
-		}
-		return coordinates;
-	}
-
-
 
 	public static ColorThemingStyle getColorThemingStyleIfEnabled(Layer layer) {
 		ColorThemingStyle someStyle = null;
-		Iterator var3 = layer.getStyles().iterator();
+		@SuppressWarnings("rawtypes")
+		Iterator it = layer.getStyles().iterator();
 
-		while(var3.hasNext()) {
-			Style style = (Style)var3.next();
+		while(it.hasNext()) {
+			Style style = (Style)it.next();
 			if (style instanceof ColorThemingStyle && style.isEnabled()) {
 				someStyle = (ColorThemingStyle)style;
 			}
@@ -222,10 +137,11 @@ public class StyleUtils {
 
 	public static void setAlpha(Layer layer, int alpha) {
 		List<Style> styles = layer.getStyles(AlphaSetting.class);
-		Iterator var4 = styles.iterator();
+		@SuppressWarnings("rawtypes")
+		Iterator it = styles.iterator();
 
-		while(var4.hasNext()) {
-			Style style = (Style)var4.next();
+		while(it.hasNext()) {
+			Style style = (Style)it.next();
 			((AlphaSetting)style).setAlpha(alpha);
 		}
 
@@ -412,42 +328,6 @@ public class StyleUtils {
 		return -1;
 	}
 
-	public static JLabel label(String text, Font font, int increaseSize, boolean editable) {
-		final JLabel labelValue = new JLabel();
-		labelValue.setToolTipText("");
-		editable = true;
-		labelValue.setBorder(BorderFactory.createEmptyBorder());
-		font = new Font(labelValue.getFont().getName(), labelValue.getFont().getStyle(), labelValue.getFont().getSize() + increaseSize);
-		labelValue.setFont(font);
-		labelValue.setText(text);
-		editable = false;
-		if (editable) {
-			labelValue.addMouseListener(new MouseAdapter() {
-				@Override
-				public void mouseClicked(MouseEvent evt) {
-					if (evt.getClickCount() == 2) {
-						TextEditor fc = new TextEditor();
-						fc.setSelectedFont(labelValue.getFont());
-						fc.setSelectedFontSize(labelValue.getFont().getSize());
-						fc.setSelectedFontStyle(labelValue.getFont().getStyle());
-						fc.setSelectedFontFamily(labelValue.getFont().getFamily());
-						fc.setSampleTextField(labelValue.getText());
-						fc.showDialog(labelValue.getParent(), I18N.get("org.openjump.core.ui.plugin.style.LegendPlugIn.modify-label"));
-						Font labelFont = fc.getSelectedFont();
-						if (fc.wasOKPressed()) {
-							labelValue.setFont(labelFont);
-							labelValue.setText(fc.getSampleTextField().getText());
-						}
-					}
-
-				}
-			});
-		}
-
-		labelValue.setForeground(new Color(20, 24, 25));
-		return labelValue;
-	}
-
 	public static JTextArea area(String text, Font font, int increaseSize) {
 		final JTextArea textArea = new JTextArea();
 		textArea.setToolTipText("");
@@ -465,7 +345,7 @@ public class StyleUtils {
 			@Override
 			public void mouseClicked(MouseEvent evt) {
 				if (evt.getClickCount() == 2) {
-					TextAreaEditor fc = new TextAreaEditor();
+					TextEditor fc = new TextEditor();
 					fc.setSelectedFont(textArea.getFont());
 					fc.setSelectedFontSize(textArea.getFont().getSize());
 					fc.setSelectedFontStyle(textArea.getFont().getStyle());
@@ -538,7 +418,7 @@ public class StyleUtils {
 		componentToMove.setBounds(newx, newy, neww, newh);
 	}
 
-	public static Shape getShapeFromGeometry(Geometry geometry, Viewport viewport) throws NoninvertibleTransformException {
+	/*	public static Shape getShapeFromGeometry(Geometry geometry, Viewport viewport) throws NoninvertibleTransformException {
 		Envelope bufferedEnvelope = EnvelopeUtil.bufferByFraction(
 				viewport.getEnvelopeInModelCoordinates(), 0.05D);
 		Geometry actualGeometry = geometry;
@@ -606,7 +486,7 @@ public class StyleUtils {
 		return  shape;
 	}
 
-
+	 */
 
 	public static String getName(String name, String description) {
 
@@ -620,7 +500,7 @@ public class StyleUtils {
 	}
 
 
-	public static Shape toShape(Geometry geometry, Viewport viewport) throws NoninvertibleTransformException {
+	/*	public static Shape toShape(Geometry geometry, Viewport viewport) throws NoninvertibleTransformException {
 		Envelope bufferedEnvelope = EnvelopeUtil.bufferByFraction(
 				viewport.getEnvelopeInModelCoordinates(), 0.05D);
 		Geometry actualGeometry = geometry;
@@ -639,7 +519,7 @@ public class StyleUtils {
 		} catch (Exception exception) {
 			return geom;
 		} 
-	}
+	}*/
 	/**
 	 * 
 	 * @param parent
