@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<root>
+<attribute xml-name="simbol" java-name="simbol"/>
+<attribute xml-name="dimension" java-name="dimension"/>
+<attribute xml-name="distance" java-name="distance"/>
+<attribute xml-name="offset" java-name="offset"/>
+<attribute xml-name="rotate" java-name="rotate"/> 
+ </root>
