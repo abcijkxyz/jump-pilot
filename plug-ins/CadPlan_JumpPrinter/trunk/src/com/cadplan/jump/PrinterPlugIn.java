@@ -153,7 +153,7 @@ public class PrinterPlugIn extends AbstractPlugIn implements ThreadedPlugIn
     {
         try
         {
-            Class dummy = Class.forName("com.cadplan.jump.VertexSymbols"); // test if VertexSymbols plugin is installed
+            Class dummy = Class.forName("com.cadplan.jump.utils.VertexStyler"); // test if VertexSymbols plugin is installed
         }
         catch(ClassNotFoundException ex)
         {
