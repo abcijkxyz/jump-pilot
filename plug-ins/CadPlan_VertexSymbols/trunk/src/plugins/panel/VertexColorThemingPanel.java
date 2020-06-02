@@ -313,13 +313,13 @@ public class VertexColorThemingPanel extends JPanel implements PropertyPanel {
 						previewPanel.repaint();
 						VertexColorThemingPanel.this.getStyle();
 						VertexColorThemingPanel.this.mainPanel.repaint();
-
-						map.replace(value, 
+						//Deactivate as it doesn't upgrade the style
+					/*	map.replace(value, 
 								new DataWrapper(classDialog.getSymbol().getSymbolName(),
 										classDialog.getSymbol().getSize(), 
 										classDialog.getSymbol().getDistance(),
 										classDialog.getSymbol().getOffset(),classDialog.getSymbol().getRotate()));
-						getStyle();
+						getStyle();*/
 						VertexColorThemingPanel.this.getParent().revalidate();
 						VertexColorThemingPanel.this.getParent().repaint();
 					} else {
