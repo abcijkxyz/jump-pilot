@@ -3,7 +3,6 @@ package org.openjump.advancedtools.block;
 import java.awt.*;
 import java.io.File;
 import java.util.*;
-import java.util.List;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -219,6 +218,8 @@ public class BlockPanel extends JPanel {
         blocks.add(BlockCell.STAR);
         try {
             File[] fList = folder.listFiles();
+            //Set list of blocks in alphabetic order
+            Arrays.sort(fList);
             if (fList != null) {
                 for (File file : fList) {
                     if (file.isFile() && file.getName().toUpperCase().endsWith(".WKT")) {
