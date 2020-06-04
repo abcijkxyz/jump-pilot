@@ -22,6 +22,7 @@ import com.vividsolutions.jump.I18N;
 import com.vividsolutions.jump.feature.Feature;
 import com.vividsolutions.jump.geom.CoordUtil;
 import com.vividsolutions.jump.workbench.JUMPWorkbench;
+import com.vividsolutions.jump.workbench.Logger;
 import com.vividsolutions.jump.workbench.WorkbenchContext;
 import com.vividsolutions.jump.workbench.plugin.AbstractPlugIn;
 import com.vividsolutions.jump.workbench.plugin.EnableCheckFactory;
@@ -189,7 +190,10 @@ public class SaveBlockPlugIn extends AbstractPlugIn {
                                 + filename;
                         GeometryUtils.writeToFile(newGeom, filenamedir);
                     }
-
+                	if (checkSymbolLibrary()) {
+						com.cadplan.jump.utils.LoadSymbolFiles loadSymbols = new com.cadplan.jump.utils.LoadSymbolFiles(context);
+						loadSymbols.start();
+					}
                     context.getWorkbenchFrame().setStatusMessage(Warning2);
 
                     if (blockPanel != null) {
@@ -205,6 +209,25 @@ public class SaveBlockPlugIn extends AbstractPlugIn {
         }
     }
 
+    boolean checkSymbolLibrary() {
+		ClassLoader cl = this.getClass().getClassLoader();
+		@SuppressWarnings("rawtypes")
+		Class c = null;
+		try {
+			c = cl.loadClass("com.cadplan.jump.utils.LoadSymbolFiles");
+
+		}
+		catch (ClassNotFoundException e) {
+			Logger.warn("Could not load Symbol file library", e);
+		}
+		if (c != null) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+    
+    
     private JPanel createMainPanel() {
         JPanel jpanel = new JPanel(new GridBagLayout());
         JLabel jLabel = new JLabel();
