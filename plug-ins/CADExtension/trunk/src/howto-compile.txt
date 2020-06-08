@@ -1,1 +1,3 @@
 VertexSymbolsXXX.jar file is required to compile CAD plugin from version 0.8
+The file is available at svn.code.sf.net/p/jump-pilot/code/plug-ins/CadPlan_VertexSymbols/dist
+or in the folder OpenJUMP/lib/ext
