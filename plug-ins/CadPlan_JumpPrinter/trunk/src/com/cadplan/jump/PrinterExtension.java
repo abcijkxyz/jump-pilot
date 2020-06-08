@@ -24,8 +24,6 @@ package com.cadplan.jump;
 import com.vividsolutions.jump.workbench.plugin.Extension;
 import com.vividsolutions.jump.workbench.plugin.PlugInContext;
 
-import javax.swing.*;
-
 /**
  * User: geoff
  * Date: 22/12/2006
@@ -34,12 +32,23 @@ import javax.swing.*;
  */
 public class PrinterExtension extends Extension
 {
-    public void configure(PlugInContext context) throws Exception
-    {
-         new PrinterPlugIn().initialize(context);
-    }
+	@Override
+	public void configure(PlugInContext context) throws Exception
+	{
+		new PrinterPlugIn().initialize(context);
+		new SaveViewPlugIn().initialize(context);
+	}
 
-    public String getVersion() {
-    return "1.88 (2018-01-28)";
-  }
+
+
+
+	@Override
+	public String getVersion() {
+		return "1.90 (2020-06-08)";
+	}
+
+	@Override
+	public String getName() {
+		return "Printer - © 2005 Geoffrey G Roy. Modified version by Giuseppe Aruta 2020";
+	}
 }
