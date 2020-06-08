@@ -1,0 +1,1 @@
+VertexSymbolsXXX.jar file is required to compile CAD plugin from version 0.8
