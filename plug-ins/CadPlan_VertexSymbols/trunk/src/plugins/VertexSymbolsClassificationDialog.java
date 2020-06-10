@@ -25,7 +25,6 @@ import com.cadplan.designer.GridBagDesigner;
 import com.cadplan.jump.language.I18NPlug;
 import com.cadplan.jump.plugins.panel.ColorPanel;
 import com.cadplan.jump.plugins.panel.VertexSymbologyPanel;
-import com.cadplan.jump.utils.DataWrapper;
 import com.cadplan.jump.utils.VertexParams;
 import com.cadplan.vertices.renderer.style.ExternalSymbolsImplType;
 import com.vividsolutions.jump.I18N;
@@ -69,7 +68,6 @@ public class VertexSymbolsClassificationDialog extends JDialog implements Action
 	public JFormattedTextField distanceField;
 	public JFormattedTextField offsetField;
 
-
 	private int distance;
 
 	private double offset ;
@@ -90,6 +88,7 @@ public class VertexSymbolsClassificationDialog extends JDialog implements Action
 		this.distance = distance;
 		this.offset= offset;
 		this.rotate=rotate;
+
 		this.init();
 	}
 
@@ -105,7 +104,6 @@ public class VertexSymbolsClassificationDialog extends JDialog implements Action
 		this.attribLabel = new JLabel(I18N.get("ui.renderer.style.ColorThemingTableModel.attribute-value") + ": ");
 		this.styleField = new JTextField();
 		this.styleField.setMinimumSize(new Dimension(75, 20));
-		//	this.styleField.setPreferredSize(new Dimension(180, 20));
 		this.styleField.setText(this.name);
 		this.styleField.setEditable(false);
 		this.attribField = new JTextField();
@@ -264,20 +262,11 @@ public class VertexSymbolsClassificationDialog extends JDialog implements Action
 
 	@Override
 	public void actionPerformed(ActionEvent ev) {
-		Integer dimension =  ((Number)this.sizeField.getValue()).intValue();//this.colorPanel.getDimension();
-		Integer distance = ((Number)this.distanceField.getValue()).intValue();
-		double offset = ((Number) this.offsetField.getValue()).doubleValue();
-		boolean rotate = this.rotationCB.isSelected();
 		if (this.wasOKPressed()) {
-			VertexParams.getClassificationMap().replace(this.value, 
-					new DataWrapper(this.getSymbolName(),
-							dimension, 
-							distance,
-							offset,rotate));
 			Map<Object, BasicStyle> attributeValueToBasicStyleMap = VertexParams.classificationStyle.getAttributeValueToBasicStyleMap();
 			BasicStyle style = attributeValueToBasicStyleMap.get(this.value);
-			style.setLineColor(this.colorPanel.getLineColor());
-			style.setFillColor(this.colorPanel.getFillColor());
+			style.setLineColor(colorPanel.getLineColor());
+			style.setFillColor(colorPanel.getFillColor());
 			this.removeJRadioButtonSelection();
 			this.dispose();
 		} else {
@@ -285,8 +274,8 @@ public class VertexSymbolsClassificationDialog extends JDialog implements Action
 			this.dispose();
 		}
 
-		this.layer.fireAppearanceChanged();
-		this.layer.setFeatureCollectionModified(true);
+		layer.fireAppearanceChanged();
+		layer.setFeatureCollectionModified(true);
 	}
 
 	public void removeJRadioButtonSelection() {
@@ -294,25 +283,24 @@ public class VertexSymbolsClassificationDialog extends JDialog implements Action
 		for(b = 0; b < this.symbologyPanel.vectorPanel.symbolPanel.vertexRB.length; ++b) {
 			this.symbologyPanel.vectorPanel.symbolPanel.vertexRB[b].setSelected(false);
 		}
-
 		for(b = 0; b < this.symbologyPanel.imagePanel.getImageRB().length; ++b) {
 			this.symbologyPanel.imagePanel.getImageRB()[b].setSelected(false);
 		}
-
 		for(b = 0; b < this.symbologyPanel.wktPanel.getImageRB().length; ++b) {
 			this.symbologyPanel.wktPanel.getImageRB()[b].setSelected(false);
 		}
-
 	}
 
-	public ExternalSymbolsImplType getSymbol() {
+	public ExternalSymbolsImplType getLegendSymbol() {
 		ExternalSymbolsImplType newStyle = new ExternalSymbolsImplType();
 		newStyle.setSymbolName(this.getSymbolName());
-		newStyle.setShowFill(true);
-		newStyle.setShowLine(true);
+		newStyle.setShowFill(VertexParams.showFill);
+		newStyle.setShowLine(VertexParams.showLine);
 		newStyle.setColors(this.colorPanel.lineColorButton.getBackground(), this.colorPanel.fillColorButton.getBackground());
-		newStyle.setSize(32);
+		newStyle.setSize(((Number) this.sizeField.getValue()).intValue());
+		newStyle.setDistance(((Number) this.distanceField.getValue()).intValue());
 		newStyle.setOffset(((Number) this.offsetField.getValue()).doubleValue());
+		newStyle.setRotate(rotationCB.isSelected());
 		newStyle.setEnabled(true);
 		return newStyle;
 	}
