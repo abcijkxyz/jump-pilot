@@ -1,0 +1,5 @@
+2020-06-10 Giuseppe Aruta
+	a) WKTVertexPanel - Enlarged WKT panel size
+	b) VertexColorThemingPanel - simplified  code
+	c) VertexSymbolsClassificationDialog - rotation and size wer
+	   not updated
