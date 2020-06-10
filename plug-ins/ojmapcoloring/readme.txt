@@ -10,7 +10,7 @@ Release Notes
 Release 0.5.1/0.5.2
 -------------
 
-Upgraded languages filas. Added Hungarian translation by János Kis
+Upgraded languages files. Added Hungarian translation by János Kis
 
 Release 0.5
 -------------
