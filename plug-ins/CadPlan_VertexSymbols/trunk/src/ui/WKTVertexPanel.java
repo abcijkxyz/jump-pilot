@@ -39,11 +39,9 @@ public class WKTVertexPanel extends JPanel {
 	public WKTVertexPanel(String imageName, Color lineColor, Color fillColor) {
 		this.setBackground(new Color(0, 0, 0, 0));
 		this.setBorder(BorderFactory.createEmptyBorder());
-		/*	this.setMaximumSize(new Dimension(80, 50));
-		this.setMinimumSize(new Dimension(80, 50));
-		this.setPreferredSize(new Dimension(80, 50));*/
-		this.setPreferredSize(new Dimension(40, 40));
-		this.setMaximumSize(new Dimension(40, 40));
+
+		this.setPreferredSize(new Dimension(50, 50));
+		this.setMaximumSize(new Dimension(50, 50));
 		this.dummyLayerViewPanel = new LayerViewPanel(new LayerManager(), new LayerViewPanelContext() {
 			@Override
 			public void setStatusMessage(String message) {
@@ -62,7 +60,7 @@ public class WKTVertexPanel extends JPanel {
 
 			@Override
 			public Envelope getEnvelopeInModelCoordinates() {
-				return new Envelope(0.0D, 80.0D, 0.0D, 50.0D);
+				return new Envelope(0.0D, 50.0D, 0.0D, 50.0D);
 			}
 
 			@Override
@@ -96,10 +94,8 @@ public class WKTVertexPanel extends JPanel {
 
 	private void paint(VertexStyle symbol, Graphics2D g) {
 		Stroke originalStroke = g.getStroke();
-		//	this.setPreferredSize(new Dimension(80, 50));
-		//	this.setMaximumSize(new Dimension(80, 50));
-		this.setPreferredSize(new Dimension(40, 40));
-		this.setMaximumSize(new Dimension(40, 40));
+		//	this.setPreferredSize(new Dimension(40, 40));
+		//		this.setMaximumSize(new Dimension(40, 40));
 		try {
 			((WKTVertexStyle)symbol).paint(this.pointFeature(), g, this.viewport);
 		} catch (Exception e) {
@@ -122,8 +118,7 @@ public class WKTVertexPanel extends JPanel {
 
 	private Feature pointFeature() {
 		try {
-			//Feature feat = FeatureUtil.toFeature((new WKTReader()).read("POINT (40 25)"), new FeatureSchema() {
-			Feature feat = FeatureUtil.toFeature((new WKTReader()).read("POINT (20 20)"), new FeatureSchema() {
+			Feature feat = FeatureUtil.toFeature((new WKTReader()).read("POINT (25 25)"), new FeatureSchema() {
 				private static final long serialVersionUID = -8627306219650589202L;
 
 				{
@@ -131,7 +126,7 @@ public class WKTVertexPanel extends JPanel {
 				}
 			});
 			return feat;
-		} catch (ParseException var2) {
+		} catch (ParseException ex) {
 			Assert.shouldNeverReachHere();
 			return null;
 		}
