@@ -7,10 +7,10 @@ unzipped folder in the JUMP_HOME/lib/ext folder.
 Release Notes
 =============
 
-Release 0.6
+Release 0.5.1/0.5.2
 -------------
 
-Added Hungarian translation by János Kis
+Upgraded languages filas. Added Hungarian translation by János Kis
 
 Release 0.5
 -------------
