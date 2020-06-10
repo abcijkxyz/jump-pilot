@@ -7,6 +7,11 @@ unzipped folder in the JUMP_HOME/lib/ext folder.
 Release Notes
 =============
 
+Release 0.6
+-------------
+
+Added Hungarian translation by János Kis
+
 Release 0.5
 -------------
 
