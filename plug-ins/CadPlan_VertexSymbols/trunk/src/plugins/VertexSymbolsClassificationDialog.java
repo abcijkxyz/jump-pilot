@@ -1,5 +1,6 @@
 package com.cadplan.jump.plugins;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
@@ -21,7 +22,6 @@ import javax.swing.event.ChangeListener;
 
 import org.saig.core.gui.swing.sldeditor.util.FormUtils;
 
-import com.cadplan.designer.GridBagDesigner;
 import com.cadplan.jump.language.I18NPlug;
 import com.cadplan.jump.plugins.panel.ColorPanel;
 import com.cadplan.jump.plugins.panel.VertexSymbologyPanel;
@@ -98,35 +98,31 @@ public class VertexSymbolsClassificationDialog extends JDialog implements Action
 		ttm.setLightWeightPopupEnabled(false);
 		this.setValues();
 
-		this.symbologyPanel = new VertexSymbologyPanel(this.line, this.inner);
+		symbologyPanel = new VertexSymbologyPanel(this.line, this.inner);
 
-		this.styleLabel = new JLabel(I18NPlug.getI18N("VertexSymbols.SymbolName"));
-		this.attribLabel = new JLabel(I18N.get("ui.renderer.style.ColorThemingTableModel.attribute-value") + ": ");
-		this.styleField = new JTextField();
-		this.styleField.setMinimumSize(new Dimension(75, 20));
-		this.styleField.setText(this.name);
-		this.styleField.setEditable(false);
-		this.attribField = new JTextField();
-		this.attribField.setMinimumSize(new Dimension(75, 20));
-		this.attribField.setPreferredSize(new Dimension(90, 20));
-		this.attribField.setText(this.value);
-		this.attribField.setEditable(false);
+		styleLabel = new JLabel(I18NPlug.getI18N("VertexSymbols.SymbolName"));
+		attribLabel = new JLabel(I18N.get("ui.renderer.style.ColorThemingTableModel.attribute-value") + ": ");
+		styleField = new JTextField();
+		styleField.setMinimumSize(new Dimension(75, 20));
+		styleField.setText( name);
+		styleField.setEditable(false);
+		attribField = new JTextField();
+		attribField.setMinimumSize(new Dimension(75, 20));
+		attribField.setPreferredSize(new Dimension(90, 20));
+		attribField.setText( value);
+		attribField.setEditable(false);
 
-		this.sizeLabel = new JLabel(I18NPlug.getI18N("VertexSymbols.Dialog.Size") + ": ");
-		this.sizeField = new JFormattedTextField();
-		this.sizeField.setColumns(5); 
-		this.sizeField.setValue(dimension);
+		sizeLabel = new JLabel(I18NPlug.getI18N("VertexSymbols.Dialog.Size") + ": ");
+		sizeField = new JFormattedTextField();
+		sizeField.setColumns(5); 
+		sizeField.setValue(dimension);
 
 
-		this.colorPanel = new ColorPanel(this.line, this.inner);
-		//	this.colorPanel.removeDimensionBox();
+		colorPanel = new ColorPanel(this.line, this.inner);
+		setLayout(new BorderLayout());
+		add(symbologyPanel, BorderLayout.NORTH);
 
-		GridBagDesigner gb = new GridBagDesigner(this);
-		gb.setPosition(0, 0);
-		gb.setSpan(4, 1);
-		gb.setWeight(1.0D, 1.0D);
-		gb.setFill(1);
-		gb.addComponent(this.symbologyPanel);
+		//	gb.addComponent(this.symbologyPanel);
 		this.symbologyPanel.addChangeListener(new ChangeListener() {
 			@Override
 			public void stateChanged(ChangeEvent e) {
@@ -147,124 +143,119 @@ public class VertexSymbolsClassificationDialog extends JDialog implements Action
 			}
 		});
 		JPanel jPanel = new JPanel(new GridBagLayout());
-		FormUtils.addRowInGBL(jPanel, 0, 0, this.attribLabel, this.attribField, false);
-		FormUtils.addRowInGBL(jPanel, 0, 2, this.styleLabel, this.styleField, false);
-
-		FormUtils.addRowInGBL(jPanel, 0, 4, this.sizeLabel, this.sizeField, false);
-
-
+		JPanel sizePanel = new JPanel(new GridBagLayout());
+		FormUtils.addRowInGBL(sizePanel, 0, 0,  styleLabel,  styleField, false);
+		FormUtils.addRowInGBL(sizePanel, 0, 2,  sizeLabel, sizeField, false);
+		FormUtils.addFiller(sizePanel, 0, 4);
+		FormUtils.addRowInGBL(jPanel, 1, 0, sizePanel, true, true);
 		String line ="<html><font color=black size=3>"
 				+ "<b>" + I18NPlug.getI18N("VertexSymbols.Dialog.line-decoration") + "</b></html>";
-		this.lineLabel = new JLabel(line);
+		lineLabel = new JLabel(line);
 
-		this.distanceField = new JFormattedTextField();
-		this.offsetField = new JFormattedTextField();
-		this.distanceField.setColumns(5); 
-		this.offsetField.setColumns(5); 
+		distanceField = new JFormattedTextField();
+		offsetField = new JFormattedTextField();
+		distanceField.setColumns(5); 
+		offsetField.setColumns(5); 
 
-		this.offsetLabel= new JLabel(I18NPlug.getI18N("VertexSymbols.Dialog.line-offset") + ": ");
-		this.distanceLabel= new JLabel(I18NPlug.getI18N("VertexSymbols.Dialog.line-distance") + ": ");
-		this.rotationCB = new JCheckBox(I18NPlug.getI18N("VertexSymbols.Dialog.line-rotate"));
-		this.rotationCB.setToolTipText(I18NPlug.getI18N("VertexSymbols.Dialog.line-rotate-tooltip"));
-		this.distanceLabel.setToolTipText(I18NPlug.getI18N("VertexSymbols.Dialog.line-distance-tooltip"));
-		this.offsetLabel.setToolTipText(I18NPlug.getI18N("VertexSymbols.Dialog.line-offset-tooltip"));
+		offsetLabel= new JLabel(I18NPlug.getI18N("VertexSymbols.Dialog.line-offset") + ": ");
+		distanceLabel= new JLabel(I18NPlug.getI18N("VertexSymbols.Dialog.line-distance") + ": ");
+		rotationCB = new JCheckBox(I18NPlug.getI18N("VertexSymbols.Dialog.line-rotate"));
+		rotationCB.setToolTipText(I18NPlug.getI18N("VertexSymbols.Dialog.line-rotate-tooltip"));
+		distanceLabel.setToolTipText(I18NPlug.getI18N("VertexSymbols.Dialog.line-distance-tooltip"));
+		offsetLabel.setToolTipText(I18NPlug.getI18N("VertexSymbols.Dialog.line-offset-tooltip"));
 
 
-		this.distanceField.setValue(this.distance);
-		this.offsetField.setValue(this.offset);
-		this.rotationCB.setSelected(this.rotate);
+		distanceField.setValue( distance);
+		offsetField.setValue( offset);
+		rotationCB.setSelected( rotate);
 
-		this.lineLabel.setEnabled(VertexParams.lineDecoration);
-		this.distanceField.setEnabled(VertexParams.lineDecoration);
-		this.offsetField.setEnabled(VertexParams.lineDecoration);
-		this.distanceLabel.setEnabled(VertexParams.lineDecoration);
-		this.offsetLabel.setEnabled(VertexParams.lineDecoration);
-		this.rotationCB.setEnabled(VertexParams.lineDecoration); 
+		lineLabel.setEnabled(VertexParams.lineDecoration);
+		distanceField.setEnabled(VertexParams.lineDecoration);
+		offsetField.setEnabled(VertexParams.lineDecoration);
+		distanceLabel.setEnabled(VertexParams.lineDecoration);
+		offsetLabel.setEnabled(VertexParams.lineDecoration);
+		rotationCB.setEnabled(VertexParams.lineDecoration); 
 
 		JPanel linePanel = new JPanel(new GridBagLayout());
-		FormUtils.addRowInGBL(linePanel, 0, 0, this.distanceLabel, this.distanceField, false); 
-		FormUtils.addRowInGBL(linePanel, 0, 2, this.offsetLabel, this.offsetField, false); 
-		FormUtils.addRowInGBL(linePanel, 0,4, rotationCB);
+		FormUtils.addRowInGBL(linePanel, 0, 0, lineLabel, false, false); 
+		FormUtils.addRowInGBL(linePanel, 0, 1, distanceLabel,  distanceField, false); 
+		FormUtils.addRowInGBL(linePanel, 0, 3, offsetLabel, offsetField, false); 
+		FormUtils.addRowInGBL(linePanel, 0,5, rotationCB);
 
-		FormUtils.addRowInGBL(jPanel, 1, 0, lineLabel, true, true);
-		FormUtils.addRowInGBL(jPanel, 1, 1, linePanel, true, true);
+		FormUtils.addRowInGBL(jPanel, 2, 0, linePanel, true, true);
 
-		FormUtils.addRowInGBL(jPanel, 2, 0, this.colorPanel, true, true);
-		gb.setPosition(0, 1);
-		gb.setFill(2);
-		gb.setInsets(10, 0, 0, 0);
-		gb.setSpan(4, 1);
-		gb.addComponent(jPanel);
+		FormUtils.addRowInGBL(jPanel, 3, 0, this.colorPanel, true, true);
+		JPanel endPanel = new JPanel(new GridBagLayout());
+		FormUtils.addRowInGBL(endPanel, 0, 1, attribLabel, attribField, false); 
 		this.okCancelApplyPanel = new OKCancelApplyPanel();
 		this.okCancelApplyPanel.addActionListener(this);
-		gb.setPosition(0, 2);
-		gb.setInsets(0, 10, 5, 5);
-		gb.setSpan(3, 1);
-		gb.addComponent(this.okCancelApplyPanel);
-		this.setJRadioButtonSelection();
-		this.pack();
+		FormUtils.addRowInGBL(endPanel, 0, 3,new JLabel(), okCancelApplyPanel, true);
+		FormUtils.addRowInGBL(jPanel, 4, 0, endPanel);
+		add(jPanel,BorderLayout.SOUTH);
+		setJRadioButtonSelection();
+		pack();
 	}
 
 	public void setValues() {
-		this.name = this.style.getActualSymbolName();
+		name =  style.getActualSymbolName();
 
 		try {
 			Map<Object, BasicStyle> attributeValueToBasicStyleMap = VertexParams.classificationStyle.getAttributeValueToBasicStyleMap();
-			BasicStyle style = attributeValueToBasicStyleMap.get(this.value);
-			this.line = GUIUtil.alphaColor(style.getLineColor(), style.getAlpha());
-			this.inner = GUIUtil.alphaColor(style.getFillColor(), style.getAlpha());
+			BasicStyle style = attributeValueToBasicStyleMap.get( value);
+			line = GUIUtil.alphaColor(style.getLineColor(), style.getAlpha());
+			inner = GUIUtil.alphaColor(style.getFillColor(), style.getAlpha());
 		} catch (Exception var3) {
-			this.line = GUIUtil.alphaColor(this.layer.getBasicStyle().getLineColor(), this.layer.getBasicStyle().getAlpha());
-			this.inner = GUIUtil.alphaColor(this.layer.getBasicStyle().getFillColor(), this.layer.getBasicStyle().getAlpha());
+			line = GUIUtil.alphaColor( layer.getBasicStyle().getLineColor(), layer.getBasicStyle().getAlpha());
+			inner = GUIUtil.alphaColor( layer.getBasicStyle().getFillColor(),  layer.getBasicStyle().getAlpha());
 		}
 
 	}
 
 	public void setJRadioButtonSelection() {
 		int b;
-		for(b = 0; b < this.symbologyPanel.vectorPanel.symbolPanel.vertexRB.length; ++b) {
+		for(b = 0; b <  symbologyPanel.vectorPanel.symbolPanel.vertexRB.length; ++b) {
 			String side = String.valueOf(this.symbologyPanel.vectorPanel.symbolPanel.getSides()[b]);
-			if (b < 7 & this.name.equals("@poly" + side)) {
-				this.symbologyPanel.vectorPanel.symbolPanel.vertexRB[b].setSelected(true);
-				this.symbologyPanel.setSelectedComponent(this.symbologyPanel.getComponent(0));
-			} else if (b < 14 & this.name.equals("@star" + side)) {
-				this.symbologyPanel.vectorPanel.symbolPanel.vertexRB[b].setSelected(true);
-				this.symbologyPanel.setSelectedComponent(this.symbologyPanel.getComponent(0));
-			} else if (this.name.equals("@any" + side)) {
-				this.symbologyPanel.vectorPanel.symbolPanel.vertexRB[b].setSelected(true);
-				this.symbologyPanel.setSelectedComponent(this.symbologyPanel.getComponent(0));
+			if (b < 7 &  name.equals("@poly" + side)) {
+				symbologyPanel.vectorPanel.symbolPanel.vertexRB[b].setSelected(true);
+				symbologyPanel.setSelectedComponent(symbologyPanel.getComponent(0));
+			} else if (b < 14 & name.equals("@star" + side)) {
+				symbologyPanel.vectorPanel.symbolPanel.vertexRB[b].setSelected(true);
+				symbologyPanel.setSelectedComponent(this.symbologyPanel.getComponent(0));
+			} else if (name.equals("@any" + side)) {
+				symbologyPanel.vectorPanel.symbolPanel.vertexRB[b].setSelected(true);
+				symbologyPanel.setSelectedComponent(symbologyPanel.getComponent(0));
 			}
 		}
 
-		for(b = 0; b < this.symbologyPanel.imagePanel.getImageRB().length; ++b) {
-			if (this.name.equals(VertexParams.imageNames[b])) {
-				this.symbologyPanel.imagePanel.getImageRB()[b].setSelected(true);
-				this.symbologyPanel.setSelectedComponent(this.symbologyPanel.getComponent(2));
+		for(b = 0; b < symbologyPanel.imagePanel.getImageRB().length; ++b) {
+			if (name.equals(VertexParams.imageNames[b])) {
+				symbologyPanel.imagePanel.getImageRB()[b].setSelected(true);
+				symbologyPanel.setSelectedComponent(symbologyPanel.getComponent(2));
 			}
 		}
 
-		for(b = 0; b < this.symbologyPanel.wktPanel.getImageRB().length; ++b) {
-			if (this.name.equals(VertexParams.wktNames[b])) {
-				this.symbologyPanel.wktPanel.getImageRB()[b].setSelected(true);
-				this.symbologyPanel.setSelectedComponent(this.symbologyPanel.getComponent(1));
+		for(b = 0; b < symbologyPanel.wktPanel.getImageRB().length; ++b) {
+			if (name.equals(VertexParams.wktNames[b])) {
+				symbologyPanel.wktPanel.getImageRB()[b].setSelected(true);
+				symbologyPanel.setSelectedComponent(symbologyPanel.getComponent(1));
 			}
 		}
 
 	}
 
 	public void setOKEnabled(boolean okEnabled) {
-		this.okCancelApplyPanel.setOKEnabled(okEnabled);
+		okCancelApplyPanel.setOKEnabled(okEnabled);
 	}
 
 	public boolean wasOKPressed() {
-		return this.okCancelApplyPanel.wasOKPressed();
+		return okCancelApplyPanel.wasOKPressed();
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent ev) {
 		if (this.wasOKPressed()) {
 			Map<Object, BasicStyle> attributeValueToBasicStyleMap = VertexParams.classificationStyle.getAttributeValueToBasicStyleMap();
-			BasicStyle style = attributeValueToBasicStyleMap.get(this.value);
+			BasicStyle style = attributeValueToBasicStyleMap.get(value);
 			style.setLineColor(colorPanel.getLineColor());
 			style.setFillColor(colorPanel.getFillColor());
 			this.removeJRadioButtonSelection();
@@ -280,14 +271,14 @@ public class VertexSymbolsClassificationDialog extends JDialog implements Action
 
 	public void removeJRadioButtonSelection() {
 		int b;
-		for(b = 0; b < this.symbologyPanel.vectorPanel.symbolPanel.vertexRB.length; ++b) {
-			this.symbologyPanel.vectorPanel.symbolPanel.vertexRB[b].setSelected(false);
+		for(b = 0; b < symbologyPanel.vectorPanel.symbolPanel.vertexRB.length; ++b) {
+			symbologyPanel.vectorPanel.symbolPanel.vertexRB[b].setSelected(false);
 		}
-		for(b = 0; b < this.symbologyPanel.imagePanel.getImageRB().length; ++b) {
-			this.symbologyPanel.imagePanel.getImageRB()[b].setSelected(false);
+		for(b = 0; b < symbologyPanel.imagePanel.getImageRB().length; ++b) {
+			symbologyPanel.imagePanel.getImageRB()[b].setSelected(false);
 		}
-		for(b = 0; b < this.symbologyPanel.wktPanel.getImageRB().length; ++b) {
-			this.symbologyPanel.wktPanel.getImageRB()[b].setSelected(false);
+		for(b = 0; b < symbologyPanel.wktPanel.getImageRB().length; ++b) {
+			symbologyPanel.wktPanel.getImageRB()[b].setSelected(false);
 		}
 	}
 
@@ -296,10 +287,10 @@ public class VertexSymbolsClassificationDialog extends JDialog implements Action
 		newStyle.setSymbolName(this.getSymbolName());
 		newStyle.setShowFill(VertexParams.showFill);
 		newStyle.setShowLine(VertexParams.showLine);
-		newStyle.setColors(this.colorPanel.lineColorButton.getBackground(), this.colorPanel.fillColorButton.getBackground());
-		newStyle.setSize(((Number) this.sizeField.getValue()).intValue());
-		newStyle.setDistance(((Number) this.distanceField.getValue()).intValue());
-		newStyle.setOffset(((Number) this.offsetField.getValue()).doubleValue());
+		newStyle.setColors(colorPanel.lineColorButton.getBackground(), colorPanel.fillColorButton.getBackground());
+		newStyle.setSize(((Number) sizeField.getValue()).intValue());
+		newStyle.setDistance(((Number) distanceField.getValue()).intValue());
+		newStyle.setOffset(((Number) offsetField.getValue()).doubleValue());
 		newStyle.setRotate(rotationCB.isSelected());
 		newStyle.setEnabled(true);
 		return newStyle;
@@ -308,14 +299,14 @@ public class VertexSymbolsClassificationDialog extends JDialog implements Action
 	public String getSymbolName() {
 		try {
 			int i;
-			for(i = 0; i < this.symbologyPanel.vectorPanel.symbolPanel.vertexRB.length; ++i) {
-				if (this.symbologyPanel.vectorPanel.symbolPanel.vertexRB[i].isSelected()) {
+			for(i = 0; i < symbologyPanel.vectorPanel.symbolPanel.vertexRB.length; ++i) {
+				if (symbologyPanel.vectorPanel.symbolPanel.vertexRB[i].isSelected()) {
 					if (i < 7) {
-						this.symbolName = "@poly" + String.valueOf(this.symbologyPanel.vectorPanel.symbolPanel.getSides()[i]);
+						symbolName = "@poly" + String.valueOf(symbologyPanel.vectorPanel.symbolPanel.getSides()[i]);
 					} else if (i < 14) {
-						this.symbolName = "@star" + String.valueOf(this.symbologyPanel.vectorPanel.symbolPanel.getSides()[i]);
+						symbolName = "@star" + String.valueOf(symbologyPanel.vectorPanel.symbolPanel.getSides()[i]);
 					} else {
-						this.symbolName = "@any" + String.valueOf(this.symbologyPanel.vectorPanel.symbolPanel.getSides()[i]);
+						symbolName = "@any" + String.valueOf(symbologyPanel.vectorPanel.symbolPanel.getSides()[i]);
 					}
 				}
 			}
