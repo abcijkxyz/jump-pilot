@@ -1,0 +1,92 @@
+<project name="jump-plugins" default="compile" basedir=".">
+
+    <!--*************************************************************************
+    *****************************************************************************
+    **                                  PROPERTIES                             **
+    *****************************************************************************
+    **************************************************************************-->
+
+    <!-- PROPERTIES : MAIN ARCHITECTURE -->
+    <property name="src"        value="src" />
+    <property name="bin"        value="bin" />
+    <property name="lib"        value="lib" />
+    <property name="build"      value="build" />
+    <property name="dist"       value="dist" />
+    <property name="javadoc"    value="javadoc" />
+    <property name="resources"  value="resources" />
+    <property name="openjump"   value="../../openjump_lib" />
+    
+    <!-- plugins -->
+    <property name="version"    value="0.3.0" />
+    
+
+    <!-- =================================================================== -->
+    <!-- Defines the classpath used for compilation and test.                -->
+    <!-- =================================================================== -->
+    <path id="classpath">
+        <fileset dir="${lib}">
+            <include name="**/*.jar"/>
+        </fileset>
+        <fileset dir="${openjump}">
+            <include name="**/*.jar"/>
+        </fileset>
+    </path>
+    
+    <target name="clean" id="clean">
+        <delete dir="${build}"/>
+    </target>
+   
+    <target name="compile" id="compile" depends="clean">
+        <tstamp/>
+        <mkdir dir="${build}"/>
+        <javac srcdir="${src}" destdir="${build}" 
+               debug="on"      deprecation="false" verbose="no"
+               includeantruntime="false"
+               source="1.8"
+               target="1.8"
+               encoding="UTF-8">
+             <classpath refid="classpath"/>
+        </javac>
+        <copy todir="${build}" >
+            <fileset dir="${src}" casesensitive="false" includes="**/*.gif, **/*.jpg, **/*.png" />
+            <fileset dir="${src}" casesensitive="false" includes="**/*.properties" />
+            <fileset dir="${src}" casesensitive="false" includes="**/*.html" />
+            <fileset dir="${src}" casesensitive="false" includes="**/*.txt" />
+            <fileset dir="${src}" casesensitive="false" includes="**/*.java2xml" />
+        </copy>
+    </target>
+
+    
+    <!-- =================================================================== -->
+    <!-- bsheditor4jump                                                            -->
+    <!-- =================================================================== -->
+    <target name="jar-bsheditor4jump" id="jar-bsheditor4jump" depends="compile">
+        <jar basedir="${build}" jarfile="${dist}/bsheditor4jump-${version}.jar">
+            <include name="org/syntax/jedit/**/*"/>
+            <include name="fr/michaelm/bsheditor/**/*"/>
+            <include name="fr/michaelm/jump/bsheditor/**/*"/>
+            <fileset dir="${resources}/bsheditor/I18N" />
+            <manifest>
+              <!-- Who is building this jar? -->
+              <attribute name="Built-By" value="${user.name}"/>
+              <!-- Information about the program itself -->
+              <attribute name="Implementation-Version" value="${version}"/>
+              <attribute name="Class-Path" value="../buoy.jar ../bsh-2.0b4.jar"/>
+              <attribute name="Main-Class" value="fr.michaelm.bsheditor.BeanShellEditor"/>
+            </manifest>
+        </jar>
+		<!--copy file="${dist}/bsheditor4jump-${version}.jar" todir="${openjump-ext}"/-->
+    </target>
+    
+    <target name="zip-bsheditor4jump-src" id="zip-bsheditor4jump-src" depends="compile">
+        <zip basedir="." zipfile="${dist}/bsheditor4jump-src-${version}.zip">
+            <include name="src/org/syntax/jedit/**/*"/>
+            <include name="src/fr/michaelm/bsheditor/**/*"/>
+            <include name="src/fr/michaelm/jump/bsheditor/**/*"/>
+            <include name="dist/bsheditor4jump-0.2.jar"/>
+            <fileset dir="${resources}/jump/bsheditor4jump"/>
+            <include name="build.xml"/>
+        </zip>
+    </target>
+    
+</project>

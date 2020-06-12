@@ -1,0 +1,30 @@
+// Starting script for jump application
+
+// wc is a variable name for workbench context
+// it gives access to the whole OpenJUMP software
+
+import com.vividsolutions.jump.feature.*;
+import com.vividsolutions.jump.workbench.model.*;
+import com.vividsolutions.jump.io.*;
+import com.vividsolutions.jump.io.datasource.*;
+import com.vividsolutions.jump.datastore.*;
+import com.vividsolutions.jump.datastore.postgis.*;
+import com.vividsolutions.jump.io.*;
+import com.vividsolutions.jump.workbench.ui.*;
+import com.vividsolutions.jump.workbench.ui.renderer.style.*;
+
+
+import com.vividsolutions.jts.geom.*;
+import com.vividsolutions.jts.io.*;
+import com.vividsolutions.jts.index.strtree.*;
+import com.vividsolutions.jts.linearref.*;
+import com.vividsolutions.jts.noding.*;
+import com.vividsolutions.jts.planargraph.*;
+import com.vividsolutions.jts.simplify.*;
+import com.vividsolutions.jts.util.*;
+
+layer(String name) {return wc.layerManager.getLayer(name);}
+
+fc(String name) {return wc.layerManager.getLayer(name).featureCollectionWrapper;}
+
+ifc(String name) {return new IndexedFeatureCollection(fc(name), new STRtree());}
