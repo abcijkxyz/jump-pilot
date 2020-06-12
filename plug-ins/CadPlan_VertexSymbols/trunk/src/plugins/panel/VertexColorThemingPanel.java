@@ -21,7 +21,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.TreeMap;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
@@ -72,15 +71,15 @@ import com.vividsolutions.jump.workbench.ui.renderer.style.BasicStyle;
 import com.vividsolutions.jump.workbench.ui.renderer.style.ColorThemingStyle;
 import com.vividsolutions.jump.workbench.ui.task.TaskMonitorManager;
 
-public class VertexColorThemingPanel2 extends JPanel implements PropertyPanel {
+public class VertexColorThemingPanel extends JPanel implements PropertyPanel {
 	private static final long serialVersionUID = 1L;
 	public JPanel upperPane;
 	//private JScrollPane scrollPane = new JScrollPane();
 	private JScrollPane scrollPane0 = new JScrollPane();
-	private Map<String, DataWrapper> map = new LinkedHashMap<String, DataWrapper>();
+	private static Map<String, DataWrapper> map = new LinkedHashMap<String, DataWrapper>();
 	public JPanel mainPanel = new JPanel();
-	String otherValues = I18N.get("ui.renderer.style.DiscreteColorThemingState.all-other-values");
-	int size=1;
+	static String otherValues = I18N.get("ui.renderer.style.DiscreteColorThemingState.all-other-values");
+	static int size=1;
 
 
 	public JScrollPane getScrollPane() {
@@ -91,7 +90,7 @@ public class VertexColorThemingPanel2 extends JPanel implements PropertyPanel {
 		return map;
 	}
 
-	public void generateMapOfStyles() {
+	public static void generateMapOfStyles() {
 		Layer layer = VertexParams.selectedLayer;
 		VertexStyler symbols = new VertexStyler();
 		symbols.setLayer(layer);
@@ -136,7 +135,7 @@ public class VertexColorThemingPanel2 extends JPanel implements PropertyPanel {
 										VertexParams.offset, 
 										VertexParams.rotate));
 							} else {
-								map.put(this.otherValues, 
+								map.put(otherValues, 
 										new DataWrapper(VertexParams.symbolName, 
 												size, 
 												VertexParams.distance,
@@ -162,11 +161,11 @@ public class VertexColorThemingPanel2 extends JPanel implements PropertyPanel {
 
 		//	VertexParams.setClassificationMap(map);
 	}
-
-	public VertexColorThemingPanel2() {
+	Layer layer;
+	public VertexColorThemingPanel() {
 		//this.setLayout(new GridBagLayout());
 		this.setLayout(new BorderLayout());
-		Layer layer = VertexParams.selectedLayer;
+		layer = VertexParams.selectedLayer;
 		FeatureSchema schema = layer.getFeatureCollectionWrapper().getFeatureSchema();
 		List<String> attributeNameList = layer.getFeatureCollectionWrapper().getFeatureSchema().getAttributeNames();
 		ColorThemingStyle styles = ColorThemingStyle.get(layer);
@@ -189,35 +188,35 @@ public class VertexColorThemingPanel2 extends JPanel implements PropertyPanel {
 					JButton button2 = new JButton();
 					toolBar.add(button1, saveAsResultPlugIn.getName(), saveAsResultPlugIn.getIcon(), AbstractPlugIn.toActionListener(this.saveAsResultPlugIn, StyleUtils.frameInstance.getContext(), (TaskMonitorManager)null), (EnableCheck)null);
 					toolBar.add(button2, saveStylePlugIn.getName(), saveStylePlugIn.getIcon(), AbstractPlugIn.toActionListener(this.saveStylePlugIn, StyleUtils.frameInstance.getContext(), (TaskMonitorManager)null), (EnableCheck)null);
-					this.upperPane = new JPanel(new GridBagLayout());
-					this.upperPane.add(new JLabel(I18NPlug.getI18N("VertexSymbols.VertexColorThemingDualog.manual")), new GridBagConstraints(1, 0, 3, 1, 1.0D, 0.0D, 17, 2, new Insets(0, 0, 0, 0), 0, 0));
-					this.upperPane.add(toolBar, new GridBagConstraints(4, 0, 1, 1, 0.0D, 0.0D, 13, 2, new Insets(0, 0, 0, 0), 0, 0));
+					 upperPane = new JPanel(new GridBagLayout());
+					 upperPane.add(new JLabel(I18NPlug.getI18N("VertexSymbols.VertexColorThemingDualog.manual")), new GridBagConstraints(1, 0, 3, 1, 1.0D, 0.0D, 17, 2, new Insets(0, 0, 0, 0), 0, 0));
+					 upperPane.add(toolBar, new GridBagConstraints(4, 0, 1, 1, 0.0D, 0.0D, 13, 2, new Insets(0, 0, 0, 0), 0, 0));
 					try {
-						TreeMap<String, DataWrapper> tmap = new TreeMap<String, DataWrapper>(this.map);//this.map);
-						scrollPane0 = classificationScrollPanel(map);
+
+						scrollPane0 = classificationScrollPanel();
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
-					TransparPanel transparency = new TransparPanel((Color)null);
-					this.add(upperPane,BorderLayout.NORTH);
-					this.add(scrollPane0,BorderLayout.CENTER);
-					this.add(transparency,BorderLayout.SOUTH);
+
+				 add(upperPane,BorderLayout.NORTH);
+				 add(scrollPane0,BorderLayout.CENTER);
+					//	this.add(transparency,BorderLayout.SOUTH);
 
 				} else if (!attributeNameList.contains(styles.getAttributeName())) {
 					lab = new JLabel(I18NPlug.getI18N("VertexSymbols.Dialog.Warning8"));
-					this.add(lab);
+					 add(lab);
 				}
 			}
 		} else {
 			lab = new JLabel(I18N.get("ui.style.ChangeStylesPlugIn.this-layer-has-no-attributes"));
-			this.add(lab);
+			 add(lab);
 		}
 
 	}
 
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public JPanel classificationPanel(Layer layer, Map<String, DataWrapper> map) {
+	public JPanel classificationPanel() {
 		Font plainFont = new Font(mainPanel.getFont().getName(), 0, mainPanel.getFont().getSize());
 		mainPanel.setLayout(new GridBagLayout());
 		mainPanel.setPreferredSize(new Dimension(600, 500));
@@ -234,25 +233,25 @@ public class VertexColorThemingPanel2 extends JPanel implements PropertyPanel {
 
 		for(Iterator it = map.entrySet().iterator(); it.hasNext(); ++row) {
 			Entry<String, DataWrapper> entry = (Entry)it.next();
-			String symbol = entry.getValue().getSimbol();
+			String symbolName = entry.getValue().getSimbol();
 			Integer dimension = entry.getValue().getdimension();
 			Integer distance = entry.getValue().getDistance();
 			Double offset= entry.getValue().getOffset();
 			boolean rotate = entry.getValue().getRotate();
-			String nome_simbolo = entry.getKey();
+			String attValue = entry.getKey();
 			//JLabel entryName = StyleUtils.label(nome_simbolo, plainFont, 0, true);
-			JTextArea entryName = StyleUtils.area(nome_simbolo, plainFont, 0);
+			JTextArea entryName = StyleUtils.area(attValue, plainFont, 0);
 			Color lineColor = Color.BLACK;
 			Color fillColor= Color.WHITE;
-			ExternalSymbolsImplType previewStyle = new ExternalSymbolsImplType();
-			previewStyle.setSymbolName(symbol);
-			previewStyle.setShowFill(true);
-			previewStyle.setShowLine(true);
+			ExternalSymbolsImplType previewSymbol= new ExternalSymbolsImplType();
+			previewSymbol.setSymbolName(symbolName);
+			previewSymbol.setShowFill(true);
+			previewSymbol.setShowLine(true);
 			BasicStyle basicStyle = new BasicStyle();
 
 			try {
 				Map<Object, BasicStyle> attributeValueToBasicStyleMap = VertexParams.classificationStyle.getAttributeValueToBasicStyleMap();
-				basicStyle = attributeValueToBasicStyleMap.get(nome_simbolo);
+				basicStyle = attributeValueToBasicStyleMap.get(attValue);
 				lineColor = GUIUtil.alphaColor(basicStyle.getLineColor(), basicStyle.getAlpha());
 				fillColor = GUIUtil.alphaColor(basicStyle.getFillColor(), basicStyle.getAlpha());
 			} catch (Exception e) {
@@ -260,11 +259,11 @@ public class VertexColorThemingPanel2 extends JPanel implements PropertyPanel {
 				fillColor = GUIUtil.alphaColor(layer.getBasicStyle().getFillColor(), layer.getBasicStyle().getAlpha());
 			}
 
-			previewStyle.setColors(lineColor, fillColor);
-			previewStyle.setSize(1);
-			previewStyle.setEnabled(true);
-			PreviewPanel previewPanel = this.symbolPanel(previewStyle, basicStyle,
-					nome_simbolo, 
+			previewSymbol.setColors(lineColor, fillColor);
+			previewSymbol.setSize(1);
+			previewSymbol.setEnabled(true);
+			PreviewPanel previewPanel = symbolPanel(previewSymbol, basicStyle,
+					attValue, 
 					dimension, 
 					distance, 
 					offset, 
@@ -278,13 +277,13 @@ public class VertexColorThemingPanel2 extends JPanel implements PropertyPanel {
 		return mainPanel;
 	}
 
-	private PreviewPanel symbolPanel(final ExternalSymbolsImplType style, final BasicStyle bStyle,
-			final String value, 
+	private PreviewPanel symbolPanel(final ExternalSymbolsImplType symbol, final BasicStyle bStyle,
+			final String attValue, 
 			final Integer dimension,
 			Integer distance, 
 			double offset, 
 			boolean rotate) {
-		final PreviewPanel previewPanel = new PreviewPanel(style, bStyle, offset);
+		final PreviewPanel previewPanel = new PreviewPanel(symbol, bStyle, offset);
 		previewPanel.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent evt) {
@@ -292,37 +291,31 @@ public class VertexColorThemingPanel2 extends JPanel implements PropertyPanel {
 					previewPanel.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.red));
 					mainPanel.repaint();
 
-					VertexSymbolsClassificationDialog classDialog = new VertexSymbolsClassificationDialog(value, 
-							style, 
-							dimension, 
-							distance, 
-							offset, 
-							rotate);
+					VertexSymbolsClassificationDialog classDialog = 
+							new VertexSymbolsClassificationDialog(attValue, 
+									symbol, 
+									dimension, 
+									distance, 
+									offset, 
+									rotate);
 					StyleUtils.leftScreen(classDialog);
 					classDialog.setVisible(true);
 					if (classDialog.wasOKPressed()) {
 						previewPanel.removeSymbol();
-						ExternalSymbolsImplType newStyle = classDialog.getLegendSymbol();
-						previewPanel.setSymbol(newStyle);
-						previewPanel.setOffset(newStyle.getOffset());
+						ExternalSymbolsImplType newSymbol= classDialog.getLegendSymbol();
+						previewPanel.setSymbol(newSymbol);
+						previewPanel.setOffset(newSymbol.getOffset());
 						previewPanel.setBorder(BorderFactory.createEmptyBorder());
-						map.replace(value, new DataWrapper(newStyle.getSymbolName(),
-								newStyle.getSize(), 
-								newStyle.getDistance(),
-								newStyle.getOffset(), 
-								newStyle.getRotate()));
-						//	previewPanel.validate();
-						//	previewPanel.repaint();
-						//		getStyle();
-						mainPanel.repaint();
+						map.replace(attValue, new DataWrapper(newSymbol.getSymbolName(),
+								newSymbol.getSize(), 
+								newSymbol.getDistance(),
+								newSymbol.getOffset(), 
+								newSymbol.getRotate()));
 
-						//	VertexColorThemingPanel.this.getParent().revalidate();
-						//	VertexColorThemingPanel.this.getParent().repaint();
+						mainPanel.repaint();
 					} else {
 						previewPanel.setBorder(BorderFactory.createEmptyBorder());
 						mainPanel.repaint();
-						//	VertexColorThemingPanel.this.getParent().revalidate();
-						//	VertexColorThemingPanel.this.getParent().repaint();
 					}
 
 
@@ -334,9 +327,9 @@ public class VertexColorThemingPanel2 extends JPanel implements PropertyPanel {
 	}
 
 
-	private JScrollPane classificationScrollPanel(Map<String, DataWrapper> map) throws IOException {
+	private JScrollPane classificationScrollPanel() throws IOException {
 		scrollPane0.setBackground(Color.WHITE);
-		scrollPane0 = new JScrollPane(classificationPanel(VertexParams.selectedLayer, map), 20, 30);
+		scrollPane0 = new JScrollPane(classificationPanel(), 20, 30);
 		scrollPane0.getViewport().getView().setBackground(Color.WHITE);
 		scrollPane0.getViewport().getView().setForeground(Color.WHITE);
 		scrollPane0.setPreferredSize(new Dimension(540, 400));
