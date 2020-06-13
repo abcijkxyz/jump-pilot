@@ -240,7 +240,8 @@ public class SaveViewPlugIn extends ThreadedBasePlugIn {
 			int viewPanelWidth = wContext.getLayerViewPanel().getWidth();
 
 			try {
-				pixelSize = (newScale/screenScale)*viewPanelWidth;
+				//pixelSize = (newScale/screenScale)*viewPanelWidth;
+				pixelSize = (screenScale/newScale)*viewPanelWidth;
 			} catch (NumberFormatException e) {
 				pixelSize = 800;  //some reasonable default
 			}  
