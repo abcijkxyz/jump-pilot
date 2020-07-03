@@ -24,6 +24,7 @@ import javax.swing.ToolTipManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import org.openjump.core.ui.util.LayerableUtil;
 import org.saig.core.gui.swing.sldeditor.util.FormUtils;
 
 import com.cadplan.jump.icon.IconLoader;
@@ -109,6 +110,10 @@ public class VertexSymbolsDialog extends MultiInputDialog implements ItemListene
 		String lineDecorationString ="<html><font color=black size=3>"
 				+ "<b>" + I18NPlug.getI18N("VertexSymbols.Dialog.activate-line-decoration") + "</b></html>";
 		activateLineDecorationCB = this.addCheckBox(lineDecorationString, false);
+		//There is no need to activate line decoration if all the geometries of a layer are points/multipoints
+		if (LayerableUtil.isPointLayer(VertexParams.selectedLayer.getFeatureCollectionWrapper())){
+			activateLineDecorationCB.setEnabled(false);
+		}
 		activateLineDecorationCB.setSelected(VertexParams.lineDecoration );
 		String lineDecorationTooltip = StyleUtils.getName(I18NPlug.getI18N("VertexSymbols.Dialog.activate-line-decoration"), I18NPlug.getI18N("VertexSymbols.Dialog.activate-line-decoration-tooltip"));
 		activateLineDecorationCB.setToolTipText(lineDecorationTooltip);
