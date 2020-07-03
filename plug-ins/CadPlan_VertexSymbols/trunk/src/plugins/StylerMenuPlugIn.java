@@ -45,8 +45,20 @@ public class StylerMenuPlugIn extends AbstractPlugIn {
 		this.context = context;
 
 		toolbarButton = DropDownButtonFactory.createDropDownToggleButton(
-				GUIUtil.toSmallIcon(IconLoader.icon("Palette.png"), 20), 
+				GUIUtil.toSmallIcon(ICON1, 20), 
 				initPopupLazily());
+		toolbarButton.setToolTipText(vertexSymbolsPlugIn.getName());
+
+		////
+		final ActionListener listener = AbstractPlugIn.toActionListener(vertexSymbolsPlugIn,
+				context.getWorkbenchContext(), taskMonitorManager);
+		toolbarButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				listener.actionPerformed(e);
+			}
+		});
+		////	
 
 		LoadSymbolFiles loadSymbols = new LoadSymbolFiles(context);
 		loadSymbols.start();
@@ -83,7 +95,7 @@ public class StylerMenuPlugIn extends AbstractPlugIn {
 
 		popup.setLayout(new GridLayout(0, 1));
 
-		mi = new JMenuItem(vertexSymbolsPlugIn.getName(), 
+		/*	mi = new JMenuItem(vertexSymbolsPlugIn.getName(), 
 				GUIUtil.toSmallIcon(ICON1, 20));
 		mi.setToolTipText(vertexSymbolsPlugIn.getName());
 		final ActionListener listener = AbstractPlugIn.toActionListener(vertexSymbolsPlugIn,
@@ -94,7 +106,7 @@ public class StylerMenuPlugIn extends AbstractPlugIn {
 				listener.actionPerformed(e);
 			}
 		});
-		popup.add(mi);
+		popup.add(mi);*/
 
 
 		mi = new JMenuItem(vertexnotePlugIn.getName(), 
