@@ -48,4 +48,11 @@ DefaultGUIFactory {
 	} 
 
 
+
+	@Override
+	public void updateToolbox() {
+		super.updateToolbox();
+	}
+
+
 }
