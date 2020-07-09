@@ -86,10 +86,12 @@ public class ToolboxFrame extends DetachableInternalFrame implements IToolboxDia
 	public void setAlgorithmsCount(final int iCount) {
 
 		// setTitle(Sextante.getText("Processing") + " - "
-		setTitle("SEXTANTE" + " - " + Sextante.getText("Toolbox") + " ("
-				+ Integer.toString(iCount) + Sextante.getText(" Tools") + ")");
+		setTitle("SEXTANTE" + " " + Sextante.getVersionNumber()+//Sextante.getText("Toolbox") + 
+				" - "
+				+ Integer.toString(iCount) + Sextante.getText(" Tools") );
 
 	}
+
 
 	@Override
 	public JDialog getDialog() {
