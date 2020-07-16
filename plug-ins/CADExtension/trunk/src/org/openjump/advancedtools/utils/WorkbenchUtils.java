@@ -1,5 +1,5 @@
 /* 
- * Kosmo - Sistema Abierto de Información Geográfica
+ * Kosmo - Sistema Abierto de Informaciï¿½n Geogrï¿½fica
  * Kosmo - Open Geographical Information System
  *
  * http://www.saig.es
@@ -21,16 +21,16 @@
  *
  * For more information, contact:
  * 
- * Sistemas Abiertos de Información Geográfica, S.L.
- * Avnda. República Argentina, 28
- * Edificio Domocenter Planta 2ª Oficina 7
+ * Sistemas Abiertos de Informaciï¿½n Geogrï¿½fica, S.L.
+ * Avnda. Repï¿½blica Argentina, 28
+ * Edificio Domocenter Planta 2ï¿½ Oficina 7
  * C.P.: 41930 - Bormujos (Sevilla)
- * España / Spain
+ * Espaï¿½a / Spain
  *
- * Teléfono / Phone Number
+ * Telï¿½fono / Phone Number
  * +34 954 788876
  * 
- * Correo electrónico / Email
+ * Correo electrï¿½nico / Email
  * info@saig.es
  *
  */
@@ -44,17 +44,27 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
+import java.io.File;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
+import java.util.Properties;
 
+import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JFormattedTextField;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
 
 import org.apache.log4j.Logger;
 import org.openjump.advancedtools.language.I18NPlug;
+import org.openjump.core.ui.plugin.customize.PythonToolsPlugIn;
+import org.openjump.util.python.JUMP_GIS_Framework;
+import org.openjump.util.python.ModifyGeometry;
+import org.openjump.util.python.PythonInteractiveInterpreter;
+import org.python.core.PySystemState;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
@@ -79,6 +89,7 @@ import com.vividsolutions.jump.workbench.plugin.PlugInContext;
 import com.vividsolutions.jump.workbench.ui.EditOptionsPanel;
 import com.vividsolutions.jump.workbench.ui.LayerNamePanel;
 import com.vividsolutions.jump.workbench.ui.LayerViewPanel;
+import com.vividsolutions.jump.workbench.ui.MenuNames;
 import com.vividsolutions.jump.workbench.ui.SelectionManager;
 import com.vividsolutions.jump.workbench.ui.SelectionManagerProxy;
 import com.vividsolutions.jump.workbench.ui.TaskFrame;
@@ -93,9 +104,12 @@ import com.vividsolutions.jump.workbench.ui.cursortool.QuasimodeTool.ModifierKey
 import com.vividsolutions.jump.workbench.ui.cursortool.SelectFeaturesTool;
 import com.vividsolutions.jump.workbench.ui.plugin.AddNewLayerPlugIn;
 import com.vividsolutions.jump.workbench.ui.plugin.PersistentBlackboardPlugIn;
+import com.vividsolutions.jump.workbench.ui.toolbox.ToolboxDialog;
 import com.vividsolutions.jump.workbench.ui.zoom.PanTool;
 import com.vividsolutions.jump.workbench.ui.zoom.ZoomToSelectedItemsPlugIn;
 import com.vividsolutions.jump.workbench.ui.zoom.ZoomTool;
+
+import bsh.util.JConsole;
 
 /**
  * <p>
@@ -289,7 +303,7 @@ public class WorkbenchUtils {
      * 
      * @return List<Layer> de entre los layerables seleccioandos devuelve los
      *         que sean de tipo Layer. Nunca devuelve null, a lo sumo una lista
-     *         vacía.
+     *         vacï¿½a.
      */
     public static List<Layer> getSelectedLayers() {
         Layerable[] selectedLayers = getSelectedLayerables();
@@ -1141,4 +1155,67 @@ public class WorkbenchUtils {
                 modelCoordinate.y));
     }
 
+    
+
+	static WorkbenchContext context =JUMPWorkbench.getInstance().getContext(); 
+
+	public static  JConsole console = new JConsole();
+	
+/**
+ * This code allows to load Python console and tools into a generic ToolboxDialog
+ * @param toolbox
+ */
+	public static void loadPython(ToolboxDialog toolbox){
+
+		console.setPreferredSize(new Dimension(450, 120));
+		PythonToolsPlugIn pPlugIn = new PythonToolsPlugIn();
+		console
+		.println(new ImageIcon(pPlugIn.getClass().getResource("jython_small_c.png")));
+		//	toolbox.getCenterPanel().add(console, BorderLayout.CENTER);
+		//	toolbox.setTitle("Jython");
+		// setup the interpreter
+		ClassLoader classLoader = context.getWorkbench()
+				.getPlugInManager().getClassLoader();
+		Properties preProperties = new Properties(System.getProperties());
+		String homepath = preProperties.getProperty("user.home");
+
+		String sep = File.separator;
+		// -- [sstein] - old */
+		/*
+		 * String WORKING_DIR = empty.getAbsoluteFile().getParent() + sep; String
+		 * jarpathX = new String(WORKING_DIR + "lib"); String startuppathX = new
+		 * String(WORKING_DIR + "lib" + sep + "ext" + sep + "jython" + sep);
+		 */
+		// -- [sstein] - new
+		File plugInDirectory = context.getWorkbench()
+				.getPlugInManager().getPlugInDirectory();
+		String jarpath = plugInDirectory.getPath();
+		String startuppath = plugInDirectory.getPath() + sep + "jython" + sep;
+
+		Properties postProperties = new Properties();
+		postProperties.put("python.home", homepath);
+		postProperties.put("python.path", startuppath);
+		PySystemState.initialize(preProperties, postProperties,
+				new String[] { "" }, classLoader);
+		String startupfile = startuppath + "CADstartup.py";
+		PySystemState.add_extdir(jarpath);
+		PySystemState.add_extdir(jarpath + sep + "ext");
+		PythonInteractiveInterpreter interpreter = new PythonInteractiveInterpreter(
+				console);
+		interpreter.set("wc", context);
+		interpreter.set("toolbox", toolbox);
+		interpreter.set("startuppath", startuppath);
+		interpreter.exec("import sys");
+		JUMP_GIS_Framework.setWorkbenchContext(context);
+		ModifyGeometry.setWorkbenchContext(context);
+		toolbox.addToolBar(); // add a new tool bar to the console
+		JMenuBar jMenuBar = new JMenuBar();
+		jMenuBar.add(new JMenu(MenuNames.TOOLS));
+		toolbox.setJMenuBar(jMenuBar);
+		if (new File(startupfile).exists())
+			interpreter.execfile(startupfile);
+		new Thread(interpreter).start();
+	}
+    
+    
 }
