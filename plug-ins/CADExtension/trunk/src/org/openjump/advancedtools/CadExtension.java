@@ -31,7 +31,7 @@ public class CadExtension extends Extension {
 
     @Override
     public String getVersion() {
-        return "0.4 (2017-11-10)";
+        return "0.9 (2020-07-18)";
     }
 
     @Override
