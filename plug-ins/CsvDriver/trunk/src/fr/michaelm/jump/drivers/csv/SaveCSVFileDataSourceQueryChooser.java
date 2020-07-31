@@ -31,7 +31,6 @@ import java.util.HashMap;
 
 import com.vividsolutions.jump.workbench.datasource.SaveFileDataSourceQueryChooser;
 import com.vividsolutions.jump.workbench.WorkbenchContext;
-import org.openjump.core.ui.swing.factory.field.FieldComponentFactoryRegistry;
 
 import static fr.michaelm.jump.drivers.csv.FieldSeparator.*;
 

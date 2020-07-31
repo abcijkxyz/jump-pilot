@@ -51,12 +51,26 @@ public class FieldSeparator {
         this.separator = separator;
     }
 
+    public FieldSeparator(String sep) {
+        if (sep.equals("{tab}")) this.separator = '\t';
+        else if (sep.equals("{whitespace}")) this.separator = ' ';
+        else if (sep != null & sep.length() > 0) this.separator = sep.charAt(0);
+        else this.separator = '\t';
+    }
+
     public char getSeparator() {
         return separator;
     }
 
     public void setSeparator(char sep) {
         this.separator = sep;
+    }
+
+    public void setSeparator(String sep) {
+        if (sep.equals("{tab}")) this.separator = '\t';
+        else if (sep.equals("{whitespace}")) this.separator = ' ';
+        else if (sep != null & sep.length() > 0) this.separator = sep.charAt(0);
+        else this.separator = '\t';
     }
     
     public Pattern getFieldPattern() {
@@ -93,7 +107,7 @@ public class FieldSeparator {
 
     public String toString() {
         if (separator == '\t') return "{tab}";
-        if (separator == ' ')  return "{whitespace}";
+        if (separator == ' ' )  return "{whitespace}";
         return "" + separator;
     }
 

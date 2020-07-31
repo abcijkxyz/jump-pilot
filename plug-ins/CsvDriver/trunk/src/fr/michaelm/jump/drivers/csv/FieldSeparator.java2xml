@@ -1,4 +1,4 @@
 <?xml version="1.0"?>
 <root>
-  <element xml-name="field-separator" java-name="separator"/>
+  <attribute xml-name="field-separator" java-name="separator"/>
 </root>

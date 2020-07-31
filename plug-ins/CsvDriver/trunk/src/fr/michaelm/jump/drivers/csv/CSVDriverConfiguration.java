@@ -43,8 +43,9 @@ import static fr.michaelm.jump.drivers.csv.FieldSeparator.*;
 /**
  * Extension loading a driver for csv and other character delimited text files
  * @author Micha&euml;l MICHAUD
- * @version 1.0.2 (2018-01-27)
+ * @version 1.0.3 (2020-07-31)
  */
+// 1.0.3 (2020-07-31) fix serialization of fieldSeparator in jmp file (need OJ r6363)
 // 1.0.2 (2018-01-27) add I18N for finnish language
 // 1.0.1 (2017-05-07) fix parser to parse correctly non quoted fields including double quotes
 // 1.0.0 (2017-02-09) writer : add encoding option
@@ -77,7 +78,7 @@ public class CSVDriverConfiguration extends Extension {
     }
 
     public String getVersion() {
-        return "1.0.2 (2018-01-27)";
+        return "1.0.3 (2020-07-31)";
     }
 
     public void configure(PlugInContext context) throws Exception {
