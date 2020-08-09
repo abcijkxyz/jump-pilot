@@ -81,7 +81,7 @@ public class CSVFile {
 
     boolean initialized = false;
 
-    private final List<Exception> exceptions = new ArrayList<Exception>();
+    private final List<Exception> exceptions = new ArrayList<>();
     
     
     /**
@@ -271,14 +271,14 @@ public class CSVFile {
      * Tokenize the line using this CSVFile fieldSeparator.
      */
     public String[] tokenize(String line) {
-        List<String> tokens = new ArrayList<String>();
+        List<String> tokens = new ArrayList<>();
         Matcher matcher = fieldSeparator.getFieldPattern().matcher(line);
         while (!matcher.hitEnd() && matcher.find()) {
             String token = matcher.group(1)!=null ? matcher.group(1) : 
                            matcher.group(2).replaceAll("\"\"","\"");
             tokens.add(token);
         }
-        return tokens.toArray(new String[tokens.size()]);
+        return tokens.toArray(new String[0]);
     }
     
     
@@ -401,18 +401,18 @@ public class CSVFile {
     
     protected void setAttributeTypes(String line) {
         if (line != null && schema == null) {
-            List<AttributeType> typeList = new ArrayList<AttributeType>();
+            List<AttributeType> typeList = new ArrayList<>();
             Matcher matcher = getFieldSeparator().getFieldPattern().matcher(line);
             boolean typed = true;
             while (!matcher.hitEnd() && matcher.find()) {
                 String type = matcher.group(1)!=null ? matcher.group(1) : matcher.group(2);
-                if (type.matches("(?i)(STRING|CHAR|VARCHAR)(\\([\\d\\.]+\\))?")) {
+                if (type.matches("(?i)(STRING|CHAR|VARCHAR)(\\([\\d.]+\\))?")) {
                     typeList.add(AttributeType.STRING);
                 }
-                else if (type.matches("(?i)(DOUBLE|DECIMAL|NUMERIC|FLOAT|REAL)(\\([\\d\\.]+\\))?")) {
+                else if (type.matches("(?i)(DOUBLE|DECIMAL|NUMERIC|FLOAT|REAL)(\\([\\d.]+\\))?")) {
                     typeList.add(AttributeType.DOUBLE);
                 }
-                else if (type.matches("(?i)(INT(EGER)?|LONG)(\\([\\d\\.]+\\))?")) {
+                else if (type.matches("(?i)(INT(EGER)?|LONG)(\\([\\d.]+\\))?")) {
                     typeList.add(AttributeType.INTEGER);
                 }
                 else if (type.matches("(?i)(DATE|TIME)")) {
@@ -456,8 +456,8 @@ public class CSVFile {
         
         return new Iterator<Feature>() {
             String line;
-            InputStream in;
-            BufferedReader br;
+            final InputStream in;
+            final BufferedReader br;
             {
                 // Skip comment and header lines
                 int headerSize = headerLine ? 1 : 0;
@@ -644,7 +644,7 @@ public class CSVFile {
                     writer.write("" + feature.getGeometry().getCoordinate().z);
                 }
                 else {
-                    String value = null;
+                    String value;
                     if (feature.getSchema().getAttributeType(columns[i]) == AttributeType.GEOMETRY) {
                         value = wktw.write(feature.getGeometry());
                     } else {

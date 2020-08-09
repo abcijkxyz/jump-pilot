@@ -53,8 +53,8 @@ public class SaveCSVFileDataSourceQueryChooser extends SaveFileDataSourceQueryCh
     }
     
 
-    private final JComboBox fieldSeparator = new JComboBox(
-        new Object[]{TABULATION,COMMA,SEMI_COLUMN,PIPE,WHITESPACE});
+    private final JComboBox<FieldSeparator> fieldSeparator = new JComboBox<>(
+        new FieldSeparator[]{TABULATION,COMMA,SEMI_COLUMN,PIPE,WHITESPACE});
 
     private final JComboBox<Charset> charsetChooser =
         new JComboBox<>(CSVDriverConfiguration.createCommonCharsetArray());

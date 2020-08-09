@@ -52,9 +52,10 @@ public class FieldSeparator {
     }
 
     public FieldSeparator(String sep) {
-        if (sep.equals("{tab}")) this.separator = '\t';
+        if (sep == null) this.separator = '\t';
+        else if (sep.equals("{tab}")) this.separator = '\t';
         else if (sep.equals("{whitespace}")) this.separator = ' ';
-        else if (sep != null & sep.length() > 0) this.separator = sep.charAt(0);
+        else if (sep.length() > 0) this.separator = sep.charAt(0);
         else this.separator = '\t';
     }
 
@@ -67,9 +68,10 @@ public class FieldSeparator {
     }
 
     public void setSeparator(String sep) {
-        if (sep.equals("{tab}")) this.separator = '\t';
+        if (sep == null) this.separator = '\t';
+        else if (sep.equals("{tab}")) this.separator = '\t';
         else if (sep.equals("{whitespace}")) this.separator = ' ';
-        else if (sep != null & sep.length() > 0) this.separator = sep.charAt(0);
+        else if (sep.length() > 0) this.separator = sep.charAt(0);
         else this.separator = '\t';
     }
     
@@ -94,7 +96,7 @@ public class FieldSeparator {
     }
     
     public String[] getFields(String line) {
-        List<String> tokens = new ArrayList<String>();
+        List<String> tokens = new ArrayList<>();
         Matcher matcher = getFieldPattern().matcher(line);
         while (!matcher.hitEnd() && matcher.find()) {
             String token = matcher.group(1)!=null ?
@@ -102,7 +104,7 @@ public class FieldSeparator {
                     matcher.group(2);
             tokens.add(token);
         }
-        return tokens.toArray(new String[tokens.size()]);
+        return tokens.toArray(new String[0]);
     }
 
     public String toString() {

@@ -43,15 +43,15 @@ public class AutoCSVFile extends CSVFile {
 
     // Pattern to differenciate a comment line Pattern starting with #
     // from a header line Pattern starting with #FID or #X (old xyz format)
-    private final static Pattern SHARP_PATTERN = Pattern.compile("^#(?!(FID|X)[\t,;\\| ])");
+    private final static Pattern SHARP_PATTERN = Pattern.compile("^#(?!(FID|X)[\t,;| ])");
     
     // Pattern matching a unquoted, integer, decimal or scientic number
     // A non-comment line containing such a pattern is considered as a data line
-    private final static Pattern NUMBER_PATTERN = Pattern.compile("[\\s\\|,;]-?\\d+(\\.\\d+([eE][-\\+]\\d+)?)?[\\s\\|,;]");
+    private final static Pattern NUMBER_PATTERN = Pattern.compile("[\\s|,;]-?\\d+(\\.\\d+([eE][-+]\\d+)?)?[\\s|,;]");
 
     // Pattern matching a WKT string
     // A non-comment line containing such a pattern is considered as a data line
-    private final static Pattern WKT_PATTERN = Pattern.compile("(((MULTI)?(POINT|LINESTRING|POLYGON))|GEOMETRYCOLLECTION) ?( EMPTY|\\([\\(\\)\\d,\\. ]*\\))");
+    private final static Pattern WKT_PATTERN = Pattern.compile("(((MULTI)?(POINT|LINESTRING|POLYGON))|GEOMETRYCOLLECTION) ?( EMPTY|\\([()\\d,. ]*\\))");
 
 
     /** No parameter constructor for persitence in a project file.*/
@@ -87,9 +87,10 @@ public class AutoCSVFile extends CSVFile {
     /**
      * Test to guess the encoding of a file (taken from
      * neoedmund'editor at http://code.google.com/p/neoeedit/)
-     * @Deprecated too dangerous, just use the system default, it can be forced
+     * @deprecated too dangerous, just use the system default, it can be forced
      * in the command line
      */
+    @Deprecated
     private String guessEncoding() throws IOException {
         // Main multi-bytes encodings
         String local_charset = Charset.defaultCharset().name();
@@ -181,7 +182,7 @@ public class AutoCSVFile extends CSVFile {
             nonComment++;
         }
         br.close();
-        guessFieldSeparator(lines.toArray(new String[lines.size()]));
+        guessFieldSeparator(lines.toArray(new String[0]));
         setColumns(line1);
         setHeaderLine(hasHeaderLine() && !pirol);
         setAttributeTypes(line2);
@@ -200,7 +201,7 @@ public class AutoCSVFile extends CSVFile {
         // if no lines are provided, return the current fieldSeparator 
         if (lines.length == 0) return false;
         FieldSeparator[] separators = new FieldSeparator[]{TABULATION, COMMA, SEMI_COLUMN, PIPE, WHITESPACE};
-        List<Set<Integer>> counts = new ArrayList<Set<Integer>>();
+        List<Set<Integer>> counts = new ArrayList<>();
         for (int i = 0 ; i < separators.length ; i++) {
             Pattern _fieldPattern = separators[i].getFieldPattern();
             counts.add(new HashSet<Integer>());
@@ -246,7 +247,7 @@ public class AutoCSVFile extends CSVFile {
     
     protected void setColumns(String line) throws IOException, CSVFileException {
 
-        if (line != null /*&& getFeatureSchema() == null*/) {
+        if (line != null) {
             boolean header = !NUMBER_PATTERN.matcher(line).find() &&
                              !WKT_PATTERN.matcher(line).find();
             setHeaderLine(header);
@@ -258,7 +259,7 @@ public class AutoCSVFile extends CSVFile {
      * Try to guess geometry columns from the column names and create the 
      * FeatureSchema
      */ 
-    protected void guessGeometryColumns(String line) throws CSVFileException, IOException {
+    protected void guessGeometryColumns(String line) {
         String[] columns = getColumns();
         if (columns != null && columns.length>0) {
             int wkt = -1; 

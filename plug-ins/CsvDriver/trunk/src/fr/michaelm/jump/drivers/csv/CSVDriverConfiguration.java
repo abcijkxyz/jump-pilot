@@ -43,8 +43,9 @@ import static fr.michaelm.jump.drivers.csv.FieldSeparator.*;
 /**
  * Extension loading a driver for csv and other character delimited text files
  * @author Micha&euml;l MICHAUD
- * @version 1.0.3 (2020-07-31)
+ * @version 1.0.4 (2020-08-09)
  */
+// 1.1.0 (2020-08-09) add hu i18n file, wkt loader now accept files with csv extension, cleanup
 // 1.0.3 (2020-07-31) fix serialization of fieldSeparator in jmp file (need OJ r6363)
 // 1.0.2 (2018-01-27) add I18N for finnish language
 // 1.0.1 (2017-05-07) fix parser to parse correctly non quoted fields including double quotes
@@ -81,7 +82,7 @@ public class CSVDriverConfiguration extends Extension {
         return "1.0.3 (2020-07-31)";
     }
 
-    public void configure(PlugInContext context) throws Exception {
+    public void configure(PlugInContext context) {
 
         final WorkbenchContext wcontext = context.getWorkbenchContext();
 
@@ -100,7 +101,7 @@ public class CSVDriverConfiguration extends Extension {
                              Pattern.compile("^//"),
                              Pattern.compile("^--"),
                              Pattern.compile("^\\$"),
-                             Pattern.compile("^#(?!(FID|X)[\t,;\\| ])")}));
+                             Pattern.compile("^#(?!(FID|X)[\t,;| ])")}));
 
         FieldComponentFactoryRegistry.setFactory(
             wcontext,
@@ -146,7 +147,7 @@ public class CSVDriverConfiguration extends Extension {
         ////////////////////////////////////////////////////////////////////////
         // Create configurable csv File Loader for XYZ puntal data
         ////////////////////////////////////////////////////////////////////////
-        List<String> csvExtensions = new ArrayList<String>();
+        List<String> csvExtensions = new ArrayList<>();
         csvExtensions.add("txt");
         csvExtensions.add("xyz");
         csvExtensions.add("csv");
@@ -161,7 +162,7 @@ public class CSVDriverConfiguration extends Extension {
             // [mmichaud 2013-11-07] change internationalized options to fixed keys properties
             // This is necessary to use persist CSVDataSource in the project file
             private Map<String,Object> toProperties(Map <String,Object> options) {
-                Map<String,Object> properties = new HashMap<String,Object>();
+                Map<String,Object> properties = new HashMap<>();
                 properties.put(CSVDataSource.CHARSET, options.get(I18NPlug.getI18N("drivers.csv.encoding")));
                 properties.put(CSVDataSource.COMMENT_LINE_PATTERN, options.get(I18NPlug.getI18N("drivers.csv.comment-line-pattern")));
                 properties.put(CSVDataSource.FIELD_SEPARATOR, options.get(I18NPlug.getI18N("drivers.csv.field-separator")));
@@ -197,8 +198,9 @@ public class CSVDriverConfiguration extends Extension {
         ////////////////////////////////////////////////////////////////////////
         // Create configurable csv File Loader for WKT data
         ////////////////////////////////////////////////////////////////////////
-        List<String> wktExtensions = new ArrayList<String>();
+        List<String> wktExtensions = new ArrayList<>();
         wktExtensions.add("wkt");
+        wktExtensions.add("csv");
 
         DataSourceFileLayerLoader wktOptionsFileLoader = new DataSourceFileLayerLoader(
             wcontext, CSVDataSource.class, "wkt (set options)", wktExtensions) {
@@ -210,7 +212,7 @@ public class CSVDriverConfiguration extends Extension {
             // [mmichaud 2013-11-07] change internationalized options to fixed keys properties
             // This is necessary to use persist CSVDataSource in the project file
             private Map<String,Object> toProperties(Map <String,Object> options) {
-                Map<String,Object> properties = new HashMap<String,Object>();
+                Map<String,Object> properties = new HashMap<>();
                 properties.put(CSVDataSource.CHARSET, options.get(I18NPlug.getI18N("drivers.csv.encoding")));
                 properties.put(CSVDataSource.COMMENT_LINE_PATTERN, options.get(I18NPlug.getI18N("drivers.csv.comment-line-pattern")));
                 properties.put(CSVDataSource.FIELD_SEPARATOR, options.get(I18NPlug.getI18N("drivers.csv.field-separator")));
@@ -250,13 +252,11 @@ public class CSVDriverConfiguration extends Extension {
 
             protected Map<String,Object> toProperties(URI uri, Map<String,Object> options) {
 
-                Map<String,Object> properties = super.toProperties(uri, new HashMap<String, Object>());
+                Map<String,Object> properties = super.toProperties(uri, new HashMap<String,Object>());
                 try {
                     final CSVFile csvFile = new AutoCSVFile((String)properties.get(DataSource.FILE_KEY), (String)properties.get("CompressedFile"));
                     properties.put("CSV_FILE", csvFile);
-                } catch(IOException e) {
-                    e.printStackTrace();
-                } catch(CSVFileException e) {
+                } catch(IOException | CSVFileException e) {
                     e.printStackTrace();
                 }
                 return properties;
@@ -285,7 +285,7 @@ public class CSVDriverConfiguration extends Extension {
         // http://stackoverflow.com/questions/8509339/what-is-the-most-common-encoding-of-each-language
         // http://www.w3.org/International/O-charset-lang.html
         SortedMap<String,Charset> availableCharsets = Charset.availableCharsets();
-        List<Charset> charsets = new ArrayList<Charset>();
+        List<Charset> charsets = new ArrayList<>();
         String[] charsetNames = new String[]{
             "windows-1252", 
             "UTF-8",
@@ -308,7 +308,7 @@ public class CSVDriverConfiguration extends Extension {
                 charsets.add(availableCharsets.get(name));
             }
         }
-        return charsets.toArray(new Charset[charsets.size()]);
+        return charsets.toArray(new Charset[0]);
     }
 
 }

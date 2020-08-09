@@ -211,7 +211,7 @@ public class CSVDataSource extends DataSource {
                     writer.close();
 
                     // [mmichaud 2013-11-06] resolve a problem of persistence in the project file
-                    if (getProperties().get(SAVED_AS) != null && ((Boolean)getProperties().get(SAVED_AS)).booleanValue()) {
+                    if (getProperties().get(SAVED_AS) != null && (Boolean) getProperties().get(SAVED_AS)) {
                         AutoCSVFile csvFile = new AutoCSVFile(csv.getFilePath(), csv.getEntryName());
                         csv.setEncoding(csv.getCharset().name());
                         csv.setFieldSeparator(csv.getFieldSeparator());
