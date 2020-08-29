@@ -1,0 +1,79 @@
+<project name="import-arcmap-style" default="compile" basedir=".">
+
+    <!--*************************************************************************
+    *****************************************************************************
+    **                                  PROPERTIES                             **
+    *****************************************************************************
+    **************************************************************************-->
+
+    <!-- PROPERTIES : MAIN ARCHITECTURE -->
+    <property name="src"           value="src" />
+    <property name="bin"           value="bin" />
+    <property name="lib"           value="lib" />
+    <property name="build"         value="build" />
+    <property name="dist"          value="dist" />
+    <property name="doc"           value="doc" />
+    <property name="resources"     value="resources" />
+    <property name="javadoc"       value="javadoc" />
+
+    <property name="import-arcmap-style-version"        value="0.1" />
+    
+    <!-- =================================================================== -->
+    <!-- Defines the classpath used for compilation and test.                -->
+    <!-- =================================================================== -->
+    <path id="classpath">
+        <!--fileset dir="${lib}">
+            <include name="**/*.jar"/>
+        </fileset-->
+        <fileset dir="../../openjump_lib">
+            <include name="**/*.jar"/>
+        </fileset>
+    </path>
+    
+    <target name="clean" id="clean">
+        <delete dir="build"/>
+        <delete dir="${javadoc}"/>
+    </target>
+   
+    <target name="compile" id="compile" depends="clean">
+        <tstamp/>
+        <mkdir dir="build"/>
+        <javac srcdir="${src}" destdir="build"
+               debug="on" deprecation="false" nowarn="true"
+               source="1.8" target="1.8">
+            <!--compilerarg value="-Xlint:unchecked"/-->
+             <classpath refid="classpath"/>
+        </javac>
+        <copy todir="build">
+            <fileset dir="${src}" includes="**/*.txt"/>
+            <fileset dir="${src}" includes="**/*.properties"/>
+            <fileset dir="${src}" includes="**/*.png"/>
+            <fileset dir="${src}" includes="**/*.gif"/>
+            <fileset dir="${src}" includes="**/*.jpg"/>
+        </copy>
+    </target>
+
+
+    <target name="import-arcmap-style-jar" id="import-arcmap-style-jar" depends="compile">
+        <mkdir dir="${dist}"/>
+        <jar jarfile="${dist}/import-arcmap-style-${import-arcmap-style-version}.jar">
+            <fileset dir="build">
+                <include name="org/openjump/ext/style/**/*.class"/>
+                <include name="org/openjump/ext/style/**/*.properties"/>
+            </fileset>
+        </jar>
+    </target>
+
+    <target name="import-arcmap-style-src" id="import-arcmap-style-src" depends="import-arcmap-style-jar">
+        <mkdir dir="${dist}"/>
+        <zip zipfile="${dist}/import-arcmap-style-src-${import-arcmap-style-version}.zip">
+            <fileset dir="${dist}">
+                <include name="import-arcmap-style-${import-arcmap-style-version}.jar"/>
+            </fileset>
+            <fileset dir=".">
+                <include name="${src}/org/openjump/ext/style/**/*.java"/>
+            </fileset>
+        </zip>
+    </target>
+
+</project>
