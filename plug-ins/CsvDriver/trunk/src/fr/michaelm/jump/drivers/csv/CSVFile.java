@@ -559,7 +559,7 @@ public class CSVFile {
                 return WKT_READER.read(fields[geometryColumns[0]]);
             } catch (ParseException e) {
                 throw new ParseException("Can't parse string '" + fields[geometryColumns[0]] +
-                    "' as double with this CSVFile using fieldSeparator '" + fieldSeparator + "'");
+                    "' as WKT with this CSVFile using fieldSeparator '" + fieldSeparator + "'");
             }
         }
         else if (geometryColumns.length == 2) {

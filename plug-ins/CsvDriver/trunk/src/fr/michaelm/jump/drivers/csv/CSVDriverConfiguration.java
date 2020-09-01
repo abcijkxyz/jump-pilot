@@ -43,8 +43,9 @@ import static fr.michaelm.jump.drivers.csv.FieldSeparator.*;
 /**
  * Extension loading a driver for csv and other character delimited text files
  * @author Micha&euml;l MICHAUD
- * @version 1.0.4 (2020-08-09)
+ * @version 1.1.1 (2020-09-02)
  */
+// 1.1.1 (2020-09-02) fix error message and add txt as a possible extension for wkt driver
 // 1.1.0 (2020-08-09) add hu i18n file, wkt loader now accept files with csv extension, cleanup
 // 1.0.3 (2020-07-31) fix serialization of fieldSeparator in jmp file (need OJ r6363)
 // 1.0.2 (2018-01-27) add I18N for finnish language
@@ -79,7 +80,7 @@ public class CSVDriverConfiguration extends Extension {
     }
 
     public String getVersion() {
-        return "1.0.3 (2020-07-31)";
+        return "1.1.1 (2020-09-02)";
     }
 
     public void configure(PlugInContext context) {
@@ -201,6 +202,7 @@ public class CSVDriverConfiguration extends Extension {
         List<String> wktExtensions = new ArrayList<>();
         wktExtensions.add("wkt");
         wktExtensions.add("csv");
+        wktExtensions.add("txt");
 
         DataSourceFileLayerLoader wktOptionsFileLoader = new DataSourceFileLayerLoader(
             wcontext, CSVDataSource.class, "wkt (set options)", wktExtensions) {
