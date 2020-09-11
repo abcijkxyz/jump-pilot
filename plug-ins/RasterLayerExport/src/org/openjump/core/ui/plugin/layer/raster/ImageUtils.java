@@ -19,12 +19,16 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.imageio.ImageIO;
+
 import org.apache.commons.imaging.ImageFormat;
+import org.apache.commons.imaging.ImageFormats;
 import org.apache.commons.imaging.ImageWriteException;
 import org.apache.commons.imaging.Imaging;
 import org.apache.commons.imaging.ImagingConstants;
 import org.apache.commons.imaging.formats.tiff.constants.TiffConstants;
+ 
  
 
 
@@ -101,7 +105,7 @@ public class ImageUtils {
             throw new IllegalArgumentException("Null 'image' argument."); //$NON-NLS-1$
         }
         
-        ImageFormat format = ImageFormat.IMAGE_FORMAT_PNG;
+        ImageFormat format = ImageFormats.PNG;
         Map<String,Object> params = new HashMap<String,Object>();
        
         Imaging.writeImage(image, out, format, params);
@@ -132,7 +136,7 @@ public class ImageUtils {
         if (image == null) {
             throw new IllegalArgumentException("Null 'image' argument."); //$NON-NLS-1$
         }
-        ImageFormat format = ImageFormat.IMAGE_FORMAT_BMP;
+        ImageFormat format = ImageFormats.BMP;
         Map<String,Object> params = new HashMap<String,Object>();
        
         Imaging.writeImage(image, out, format, params);
@@ -189,7 +193,7 @@ public class ImageUtils {
             throw new IllegalArgumentException("Null 'image' argument."); //$NON-NLS-1$
         }
 
-        ImageFormat format = ImageFormat.IMAGE_FORMAT_TIFF;
+        ImageFormat format = ImageFormats.PNG;
         Map<String,Object> params = new HashMap<String,Object>();
         
         params.put(ImagingConstants.PARAM_KEY_COMPRESSION, new Integer(
@@ -249,7 +253,8 @@ public class ImageUtils {
      
       ImageFilter filter = new RGBImageFilter()
       {
-        public final int filterRGB(int x, int y, int rgb)
+        @Override
+		public final int filterRGB(int x, int y, int rgb)
         {
           int r = (rgb & 0xFF0000) >> 16;
           int g = (rgb & 0xFF00) >> 8;

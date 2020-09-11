@@ -16,6 +16,7 @@ import java.io.PrintStream;
 import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.Properties;
+
 import javax.imageio.ImageIO;
 import javax.media.jai.PlanarImage;
 import javax.swing.Icon;
@@ -24,14 +25,12 @@ import javax.swing.JFileChooser;
 import org.apache.commons.imaging.ImageWriteException;
 import org.apache.log4j.Logger;
 import org.openjump.core.apitools.LayerTools;
+import org.openjump.core.rasterimage.AddRasterImageLayerWizard;
 import org.openjump.core.rasterimage.RasterImageLayer;
 import org.openjump.core.rasterimage.WorldFileHandler;
 import org.openjump.core.rasterimage.sextante.OpenJUMPSextanteRasterLayer;
 import org.openjump.core.rasterimage.sextante.rasterWrappers.GridWrapperNotInterpolated;
-import org.openjump.core.ui.plugin.layer.pirolraster.LoadSextanteRasterImagePlugIn;
-import com.sun.media.jai.codec.TIFFEncodeParam;
-import com.sun.media.jai.codecimpl.TIFFCodec;
-import com.sun.media.jai.codecimpl.TIFFImageEncoder;
+
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jump.I18N;
 import com.vividsolutions.jump.task.TaskMonitor;
@@ -99,8 +98,7 @@ ThreadedPlugIn {
 
 	protected double[][] data;
 	private Properties properties = null;
-	private static String propertiesFile = LoadSextanteRasterImagePlugIn
-			.getPropertiesFile();
+	private static String propertiesFile = "RasterImage.properties";
 	NumberFormat cellFormat = null;
 	public static final Double DEFAULT_NODATA = -9999.00;
 	public double defaultNoData = -9999;
@@ -170,6 +168,7 @@ ThreadedPlugIn {
 		return ICON;
 	}
 
+	@Override
 	public void initialize(PlugInContext context) throws Exception {
 		WorkbenchContext workbenchContext = context.getWorkbenchContext();
 		new FeatureInstaller(workbenchContext);
@@ -179,6 +178,7 @@ ThreadedPlugIn {
 				false, null, createEnableCheck(context.getWorkbenchContext()));
 	}
 
+	@Override
 	public boolean execute(PlugInContext context) throws Exception {
 		reportNothingToUndoYet(context);
 
@@ -199,6 +199,7 @@ ThreadedPlugIn {
 		}
 	}
 
+	@Override
 	public void run(TaskMonitor monitor, PlugInContext context)
 			throws Exception {
 
@@ -215,11 +216,11 @@ ThreadedPlugIn {
 			BufferedImage image = null;
 			RasterImageLayer rLayer = (RasterImageLayer) LayerTools
 					.getSelectedLayerable(context, RasterImageLayer.class);
-			Raster r = rLayer.getRasterData();
+			Raster r = rLayer.getRasterData(null);
 			SampleModel sm = r.getSampleModel();
 			ColorModel colorModel = PlanarImage.createColorModel(sm);
 			image = new BufferedImage(colorModel,
-					(WritableRaster) rLayer.getRasterData(), false, null);
+					(WritableRaster) rLayer.getRasterData(null), false, null);
 
 			layerName = rLayer.getName();
 
@@ -373,7 +374,7 @@ ThreadedPlugIn {
 				// ... and the image is in b-w/grey only (similar to png) 
  				// use Apache commons-imaging
 				ImageUtils.writeBufferedImageAsTIF(out, image);
-				Envelope envelope = rLayer.getEnvelope();
+				Envelope envelope = rLayer.getWholeImageEnvelope();
 				WorldFileHandler worldFileHandler = new WorldFileHandler(
 						file.getAbsolutePath(), false);
 				worldFileHandler.writeWorldFile(envelope,
@@ -392,7 +393,7 @@ ThreadedPlugIn {
 
 	private void saveInfoFile(RasterImageLayer rLayer, OpenJUMPSextanteRasterLayer rstLayer) throws IOException {
 		OutputStream out1 = null;
-
+		Envelope env = rLayer.getWholeImageEnvelope();
 		try {
 
 			out1 = new FileOutputStream(fileINFO);
@@ -401,10 +402,10 @@ ThreadedPlugIn {
 			c.println(DATASOURCE_CLASS + ": " + file + "\n");
 			c.println(RASTER_SIZE + ": " + rstLayer.getLayerGridExtent().getNX() + " x "+ rstLayer.getLayerGridExtent().getNY() + "\n");
 			c.println(EXTENT + ":");
-			c.println(XMIN + ": " + rLayer .getEnvelope().getMinX());
-			c.println(YMIN + ": " + rLayer.getEnvelope().getMinY());
-			c.println(XMAX + ": " + rLayer.getEnvelope().getMaxX());
-			c.println(YMAX + ": " + rLayer.getEnvelope().getMaxY() + "\n");
+			c.println(XMIN + ": " + env.getMinX());
+			c.println(YMIN + ": " + env.getMinY());
+			c.println(XMAX + ": " + env.getMaxX());
+			c.println(YMAX + ": " + env.getMaxY() + "\n");
 			c.println(BANDS + ": " + rstLayer.getBandsCount() + "\n");
 			c.println(CELL_SIZE + ": " + rstLayer.getLayerCellSize()+ "\n");
 			c.println(CELL_VALUES + ":");
@@ -428,7 +429,7 @@ ThreadedPlugIn {
 	private void saveGrd(PlugInContext context, RasterImageLayer rLayer)
 			throws IOException {
 		OutputStream out = null;
-
+		Envelope env = rLayer.getWholeImageEnvelope();
 		try {
 			OpenJUMPSextanteRasterLayer rstLayer = new OpenJUMPSextanteRasterLayer();
 			rstLayer.create(rLayer);
@@ -443,7 +444,7 @@ ThreadedPlugIn {
 						propertiesFile);
 				this.properties.load(fis);
 				this.properties
-				.getProperty(LoadSextanteRasterImagePlugIn.KEY_PATH);
+				.getProperty(AddRasterImageLayerWizard.KEY_PATH);
 				fis.close();
 			} catch (FileNotFoundException e) {
 				// not sure if it is necessary to show this warning,
@@ -461,14 +462,14 @@ ThreadedPlugIn {
 			// Surfer grids are based on grid lines which equate to the
 			// edges of a cell.
 
-			Double xcMin = rLayer.getEnvelope().getMinX()
-					+ (0.5 * rstLayer.getLayerCellSize());
-			Double ycMin = rLayer.getEnvelope().getMinY()
-					+ (0.5 * rstLayer.getLayerCellSize());
-			Double xcMax = rLayer.getEnvelope().getMaxX()
-					- (0.5 * rstLayer.getLayerCellSize());
-			Double ycMax = rLayer.getEnvelope().getMaxY()
-					- (0.5 * rstLayer.getLayerCellSize());
+			Double xcMin = env.getMinX()
+					+ (0.5 * rLayer.getMetadata().getOriginalCellSize());
+			Double ycMin = env.getMinY()
+					+ (0.5 * rLayer.getMetadata().getOriginalCellSize());
+			Double xcMax = env.getMaxX()
+					- (0.5 * rLayer.getMetadata().getOriginalCellSize());
+			Double ycMax = env.getMaxY()
+					- (0.5 * rLayer.getMetadata().getOriginalCellSize());
 
 			// Write Header
 
@@ -557,7 +558,7 @@ ThreadedPlugIn {
 						propertiesFile);
 				this.properties.load(fis);
 				this.properties
-				.getProperty(LoadSextanteRasterImagePlugIn.KEY_PATH);
+				.getProperty(AddRasterImageLayerWizard.KEY_PATH);
 				fis.close();
 			} catch (FileNotFoundException e) {
 				// not sure if it is necessary to show this warning,
@@ -621,7 +622,7 @@ ThreadedPlugIn {
 	private void saveAsc(PlugInContext context, RasterImageLayer rLayer)
 			throws IOException {
 		OutputStream out = null;
-
+		Envelope env = rLayer.getWholeImageEnvelope();
 		try {
 			OpenJUMPSextanteRasterLayer rstLayer = new OpenJUMPSextanteRasterLayer();
 			rstLayer.create(rLayer);
@@ -636,7 +637,7 @@ ThreadedPlugIn {
 						propertiesFile);
 				this.properties.load(fis);
 				this.properties
-				.getProperty(LoadSextanteRasterImagePlugIn.KEY_PATH);
+				.getProperty(AddRasterImageLayerWizard.KEY_PATH);
 				fis.close();
 			} catch (FileNotFoundException e) {
 				// not sure if it is necessary to show this warning,
@@ -655,7 +656,7 @@ ThreadedPlugIn {
 			o.println("nrows " + rLayer.getOrigImageHeight());// Number
 			// of
 			// rows
-			o.println("xllcorner " + rLayer.getEnvelope().getMinX());// the
+			o.println("xllcorner " + env.getMinX());// the
 			// x
 			// coordinate
 			// of
@@ -668,7 +669,7 @@ ThreadedPlugIn {
 			// left
 			// grid
 			// cell
-			o.println("yllcorner " + rLayer.getEnvelope().getMinY());// the
+			o.println("yllcorner " + env.getMinY());// the
 			// Y
 			// coordinate
 			// of
@@ -735,12 +736,13 @@ ThreadedPlugIn {
 	private void writeGif(BufferedImage image, RasterImageLayer rLayer)
 			throws FileNotFoundException, IOException, ImageWriteException {
 		OutputStream out = null;
+		Envelope env = rLayer.getWholeImageEnvelope();
 		try {
 			out = new FileOutputStream(file);
 			File inputFile = new File(rLayer.getName());
 			BufferedImage input = ImageIO.read(inputFile);
 			ImageUtils.writeBufferedImageAsGIF(out, input);
-			Envelope envelope = rLayer.getEnvelope();
+			Envelope envelope = env;
 			WorldFileHandler worldFileHandler = new WorldFileHandler(
 					file.getAbsolutePath(), false);
 			worldFileHandler.writeWorldFile(envelope, image.getWidth(),
@@ -760,10 +762,11 @@ ThreadedPlugIn {
 	private void writeBmp(BufferedImage image, RasterImageLayer rLayer)
 			throws FileNotFoundException, IOException, ImageWriteException {
 		OutputStream out = null;
+		Envelope env = rLayer.getWholeImageEnvelope();
 		try {
 			out = new FileOutputStream(file);
 			ImageUtils.writeBufferedImageAsBMP(out, image);
-			Envelope envelope = rLayer.getEnvelope();
+			Envelope envelope = env;
 			WorldFileHandler worldFileHandler = new WorldFileHandler(
 					file.getAbsolutePath(), false);
 			worldFileHandler.writeWorldFile(envelope, image.getWidth(),
@@ -779,10 +782,11 @@ ThreadedPlugIn {
 	private void writeJp2(BufferedImage image, RasterImageLayer rLayer)
 			throws FileNotFoundException, IOException {
 		OutputStream out = null;
+		Envelope env = rLayer.getWholeImageEnvelope();
 		try {
 			out = new FileOutputStream(file);
 			ImageUtils.writeBufferedImageAsJPEG2000(out, image);
-			Envelope envelope = rLayer.getEnvelope();
+			Envelope envelope = env;
 			WorldFileHandler worldFileHandler = new WorldFileHandler(
 					file.getAbsolutePath(), false);
 			worldFileHandler.writeWorldFile(envelope, image.getWidth(),
@@ -798,12 +802,13 @@ ThreadedPlugIn {
 	private void writeJpg(BufferedImage image, RasterImageLayer rLayer)
 			throws FileNotFoundException, IOException, ImageWriteException {
 		OutputStream out = null;
+		Envelope env = rLayer.getWholeImageEnvelope();
 		try {
 
 			out = new FileOutputStream(file);
 			ImageUtils.writeBufferedImageAsJPEG(out, 1.0f, image);
 
-			Envelope envelope = rLayer.getEnvelope();
+			Envelope envelope = env;
 			WorldFileHandler worldFileHandler = new WorldFileHandler(
 					file.getAbsolutePath(), false);
 			worldFileHandler.writeWorldFile(envelope, image.getWidth(),
@@ -819,12 +824,13 @@ ThreadedPlugIn {
 	private void writePng(BufferedImage image, RasterImageLayer rLayer)
 			throws FileNotFoundException, IOException {
 		OutputStream out = null;
+		Envelope env = rLayer.getWholeImageEnvelope();
 		try {
 			out = new FileOutputStream(file);
 
 			ImageUtils.writeBufferedImageAsPNG2(out, image);
 
-			Envelope envelope = rLayer.getEnvelope();
+			Envelope envelope = env;
 			WorldFileHandler worldFileHandler = new WorldFileHandler(
 					file.getAbsolutePath(), false);
 			worldFileHandler.writeWorldFile(envelope, image.getWidth(),
